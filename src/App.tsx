@@ -1,0 +1,388 @@
+import React, { useState, useEffect } from 'react';
+import { Home, BookOpen, Clock, CheckSquare, Heart, Settings as SettingsIcon } from 'lucide-react';
+
+import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, BucketItem, UserProfile } from './types';
+import { DEFAULT_SYLLABUS } from './data/syllabus';
+import { stateStorage } from './db/storage';
+import { audioSynthesizer } from './components/AudioSynthesizer';
+
+// Import Screens
+import SmartphoneFrame from './components/SmartphoneFrame';
+import Dashboard from './components/Dashboard';
+import SyllabusTracker from './components/SyllabusTracker';
+import PomodoroTimer from './components/PomodoroTimer';
+import TodoList from './components/TodoList';
+import BucketList from './components/BucketList';
+import Settings from './components/Settings';
+
+// Default mock values for empty state seeding
+const INITIAL_TODOS: TodoItem[] = [
+  { id: 'todo-1', text: 'Solve 15 Quant algebra questions 📐', completed: false, category: 'study', priority: 'high' },
+  { id: 'todo-2', text: 'Revise static GK books & authors list 📚', completed: false, category: 'study', priority: 'medium' },
+  { id: 'todo-3', text: 'Drink 8 glasses of water today 💧', completed: false, category: 'health', priority: 'medium' },
+  { id: 'todo-4', text: 'Organize study desk & clear drafts 🌸', completed: true, category: 'personal', priority: 'low' }
+];
+
+const INITIAL_BUCKET: BucketItem[] = [
+  { id: 'bucket-1', title: 'Achieve SSC CGL Top Rank & Get Posted 👑', description: 'Your dream job is waiting. Work hard now, shine later!', category: 'Career Goals 💼', completed: false, targetDate: '2026-10-31' },
+  { id: 'bucket-2', title: 'Stroll under cherry blossom gardens in Kyoto 🌸', description: 'Float under pink petals with the breeze!', category: 'Travel ✈️', completed: false },
+  { id: 'bucket-3', title: 'Build a cozy private plant terrace library 🌿', description: 'Coffee, books, green vines, and beautiful lights.', category: 'Personal Growth 🌱', completed: false }
+];
+
+// Helper function to safely merge local database state with updated schema defaults.
+// Preserves all user study statuses, custom notes, dates, and revision tags.
+const mergeSyllabus = (local: SyllabusSubject[], defaults: SyllabusSubject[]): SyllabusSubject[] => {
+  if (!local || local.length === 0) return defaults;
+  
+  return defaults.map(defaultSubj => {
+    const localSubj = local.find(s => s.id === defaultSubj.id);
+    if (!localSubj) return defaultSubj;
+    
+    // Merge topics
+    const mergedTopics = defaultSubj.topics.map(defaultTopic => {
+      const localTopic = localSubj.topics.find(t => t.id === defaultTopic.id);
+      if (localTopic) {
+        // Return existing local state, retaining its details but updating category or name if they changed in defaults
+        return {
+          ...defaultTopic,
+          status: localTopic.status,
+          notes: localTopic.notes,
+          revisionStatus: localTopic.revisionStatus,
+          targetDate: localTopic.targetDate
+        };
+      }
+      return defaultTopic;
+    });
+
+    // Also look for legacy local topics that the user has started/modified, and preserve them in a "Legacy/Other" category!
+    const legacyTopics = localSubj.topics.filter(localTopic => {
+      // It's a legacy topic if it's not in the default list
+      const existsInDefault = defaultSubj.topics.some(t => t.id === localTopic.id);
+      if (existsInDefault) return false;
+      
+      // Keep it only if the user has modified it (completed, added notes, set target date, or revised)
+      const hasProgress = localTopic.status !== 'pending' || 
+                          (localTopic.notes && localTopic.notes.trim() !== '') || 
+                          localTopic.revisionStatus !== 'not_revised' || 
+                          localTopic.targetDate;
+      return hasProgress;
+    }).map(legacyTopic => ({
+      ...legacyTopic,
+      category: legacyTopic.category || 'Other' // Group it safely
+    }));
+
+    return {
+      ...defaultSubj,
+      topics: [...mergedTopics, ...legacyTopics]
+    };
+  });
+};
+
+export const App: React.FC = () => {
+  // Navigation Tabs state
+  const [activeTab, setActiveTab] = useState<AppTab>('dashboard');
+
+  // Core Data States (Lazy loaded from local storage)
+  const [syllabus, setSyllabus] = useState<SyllabusSubject[]>(() => {
+    const local = stateStorage.get<SyllabusSubject[]>('syllabus', []);
+    return mergeSyllabus(local, DEFAULT_SYLLABUS);
+  });
+  
+  const [todos, setTodos] = useState<TodoItem[]>(() => 
+    stateStorage.get<TodoItem[]>('todos', INITIAL_TODOS)
+  );
+
+  const [bucketList, setBucketList] = useState<BucketItem[]>(() => 
+    stateStorage.get<BucketItem[]>('bucket', INITIAL_BUCKET)
+  );
+
+  const [streak, setStreak] = useState<number>(() => 
+    stateStorage.get<number>('streak', 0)
+  );
+
+  const [profile, setProfile] = useState<UserProfile>(() => 
+    stateStorage.get<UserProfile>('profile', { name: 'Bujjithalli', avatar: '🌸', streak: 0 })
+  );
+
+  const [theme, setTheme] = useState<AppTheme>(() => 
+    stateStorage.get<AppTheme>('theme', 'cozy-room')
+  );
+
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => 
+    stateStorage.get<boolean>('dark_mode', false)
+  );
+
+  // Sync state changes with LocalStorage
+  useEffect(() => { stateStorage.set('syllabus', syllabus); }, [syllabus]);
+  useEffect(() => { stateStorage.set('todos', todos); }, [todos]);
+  useEffect(() => { stateStorage.set('bucket', bucketList); }, [bucketList]);
+  useEffect(() => { stateStorage.set('streak', streak); }, [streak]);
+  
+  useEffect(() => { 
+    stateStorage.set('profile', { ...profile, streak }); 
+  }, [profile, streak]);
+
+  useEffect(() => { 
+    stateStorage.set('theme', theme); 
+    // Synchronize HTML classes for HSL dynamic themes
+    const rootEl = document.documentElement;
+    rootEl.className = `theme-${theme}`;
+    if (isDarkMode) {
+      rootEl.classList.add('dark-mode');
+    } else {
+      rootEl.classList.remove('dark-mode');
+    }
+  }, [theme, isDarkMode]);
+
+  useEffect(() => {
+    stateStorage.set('dark_mode', isDarkMode);
+  }, [isDarkMode]);
+
+  // Tab Change Handler
+  const handleTabChange = (tab: AppTab) => {
+    audioSynthesizer.playChime('click');
+    setActiveTab(tab);
+  };
+
+  // --- CONTROLLERS ---
+
+  // Update Syllabus Topic Details
+  const handleUpdateTopic = (subjectId: string, topicId: string, updatedFields: Partial<SyllabusTopic>) => {
+    setSyllabus(prev => prev.map(subject => {
+      if (subject.id !== subjectId) return subject;
+      return {
+        ...subject,
+        topics: subject.topics.map(topic => {
+          if (topic.id !== topicId) return topic;
+          return { ...topic, ...updatedFields };
+        })
+      };
+    }));
+  };
+
+  // To-Do Handlers
+  const handleAddTodo = (text: string, category: TodoCategory, priority: PriorityLevel, dueDate?: string) => {
+    const newTodo: TodoItem = {
+      id: `todo_${Date.now()}`,
+      text,
+      completed: false,
+      category,
+      priority,
+      dueDate
+    };
+    setTodos(prev => [newTodo, ...prev]);
+  };
+
+  const handleToggleTodo = (id: string) => {
+    setTodos(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  };
+
+  const handleDeleteTodo = (id: string) => {
+    setTodos(prev => prev.filter(t => t.id !== id));
+  };
+
+  // Bucket List Handlers
+  const handleAddBucketItem = (title: string, description: string, category: string, imageKey?: string, targetDate?: string) => {
+    const newItem: BucketItem = {
+      id: `bucket_${Date.now()}`,
+      title,
+      description,
+      category,
+      imageUrl: imageKey,
+      completed: false,
+      targetDate
+    };
+    setBucketList(prev => [newItem, ...prev]);
+  };
+
+  const handleToggleBucketItem = (id: string) => {
+    setBucketList(prev => prev.map(item => item.id === id ? { ...item, completed: !item.completed } : item));
+  };
+
+  const handleDeleteBucketItem = (id: string) => {
+    setBucketList(prev => prev.filter(item => item.id !== id));
+  };
+
+  // Streak & Timer Logs
+  const handleIncrementStreak = () => {
+    setStreak(prev => prev + 1);
+  };
+
+  const handleLogSession = (duration: number, type: 'focus' | 'short_break' | 'long_break') => {
+    console.log(`Logged session: ${duration}m of ${type}`);
+    // Future stats tracker database insertions can happen here
+  };
+
+  // Backup Sync Imports/Exports
+  const getFullBackupString = () => {
+    return JSON.stringify({
+      syllabus,
+      todos,
+      bucketList,
+      streak,
+      profile,
+      theme,
+      isDarkMode
+    });
+  };
+
+  const handleImportBackup = (jsonData: string) => {
+    try {
+      const data = JSON.parse(jsonData);
+      if (data.syllabus) setSyllabus(data.syllabus);
+      if (data.todos) setTodos(data.todos);
+      if (data.bucketList) setBucketList(data.bucketList);
+      if (data.streak !== undefined) setStreak(data.streak);
+      if (data.profile) setProfile(data.profile);
+      if (data.theme) setTheme(data.theme);
+      if (data.isDarkMode !== undefined) setIsDarkMode(data.isDarkMode);
+
+      // Force instant write
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleResetData = () => {
+    stateStorage.remove('syllabus');
+    stateStorage.remove('todos');
+    stateStorage.remove('bucket');
+    stateStorage.remove('streak');
+    stateStorage.remove('profile');
+    stateStorage.remove('theme');
+    stateStorage.remove('dark_mode');
+  };
+
+  // Render Screen Helper
+  const renderScreen = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return (
+          <Dashboard
+            userName={profile.name}
+            syllabus={syllabus}
+            todos={todos}
+            streak={streak}
+            onNavigate={(tab) => {
+              if (tab === 'syllabus') setActiveTab('syllabus');
+              if (tab === 'timer') setActiveTab('timer');
+              if (tab === 'todo') setActiveTab('todo');
+              if (tab === 'bucket') setActiveTab('bucket');
+            }}
+          />
+        );
+      case 'syllabus':
+        return (
+          <SyllabusTracker
+            syllabus={syllabus}
+            onUpdateTopic={handleUpdateTopic}
+          />
+        );
+      case 'timer':
+        return (
+          <PomodoroTimer
+            activeTheme={theme}
+            streak={streak}
+            onIncrementStreak={handleIncrementStreak}
+            onLogSession={handleLogSession}
+          />
+        );
+      case 'todo':
+        return (
+          <TodoList
+            todos={todos}
+            onAddTodo={handleAddTodo}
+            onToggleTodo={handleToggleTodo}
+            onDeleteTodo={handleDeleteTodo}
+          />
+        );
+      case 'bucket':
+        return (
+          <BucketList
+            bucketList={bucketList}
+            onAddBucketItem={handleAddBucketItem}
+            onToggleBucketItem={handleToggleBucketItem}
+            onDeleteBucketItem={handleDeleteBucketItem}
+          />
+        );
+      case 'settings':
+        return (
+          <Settings
+            profile={profile}
+            activeTheme={theme}
+            isDarkMode={isDarkMode}
+            onUpdateProfileName={(name) => setProfile(prev => ({ ...prev, name }))}
+            onSelectTheme={setTheme}
+            onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+            onResetAllData={handleResetData}
+            onImportAllData={handleImportBackup}
+            exportDataString={getFullBackupString()}
+          />
+        );
+    }
+  };
+
+  return (
+    <SmartphoneFrame>
+      {/* Screen Scrolling Content Wrapper */}
+      <div className="app-content">
+        {renderScreen()}
+      </div>
+
+      {/* Screen Navigation Bottom Tab Bar */}
+      <div className="app-tab-bar">
+        <button
+          onClick={() => handleTabChange('dashboard')}
+          className={`tab-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+        >
+          <Home className="tab-item-icon" />
+          <span className="tab-label">Home</span>
+        </button>
+
+        <button
+          onClick={() => handleTabChange('syllabus')}
+          className={`tab-item ${activeTab === 'syllabus' ? 'active' : ''}`}
+        >
+          <BookOpen className="tab-item-icon" />
+          <span className="tab-label">Syllabus</span>
+        </button>
+
+        <button
+          onClick={() => handleTabChange('timer')}
+          className={`tab-item ${activeTab === 'timer' ? 'active' : ''}`}
+        >
+          <Clock className="tab-item-icon" />
+          <span className="tab-label">Timer</span>
+        </button>
+
+        <button
+          onClick={() => handleTabChange('todo')}
+          className={`tab-item ${activeTab === 'todo' ? 'active' : ''}`}
+        >
+          <CheckSquare className="tab-item-icon" />
+          <span className="tab-label">To-Do</span>
+        </button>
+
+        <button
+          onClick={() => handleTabChange('bucket')}
+          className={`tab-item ${activeTab === 'bucket' ? 'active' : ''}`}
+        >
+          <Heart className="tab-item-icon" />
+          <span className="tab-label">Dreams</span>
+        </button>
+
+        <button
+          onClick={() => handleTabChange('settings')}
+          className={`tab-item ${activeTab === 'settings' ? 'active' : ''}`}
+        >
+          <SettingsIcon className="tab-item-icon" />
+          <span className="tab-label">Settings</span>
+        </button>
+      </div>
+    </SmartphoneFrame>
+  );
+};
+export default App;
