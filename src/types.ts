@@ -52,3 +52,17 @@ export interface UserProfile {
 
 export type AppTheme = 'cozy-room' | 'night-sky' | 'nature-rain' | 'study-desk' | 'ocean-breeze';
 export type AppTab = 'dashboard' | 'syllabus' | 'timer' | 'todo' | 'bucket' | 'settings';
+
+export interface DailyLog {
+  date: string; // YYYY-MM-DD
+  hours: number;
+  topicsCompleted: number;
+}
+
+export interface MockTest {
+  id: string;
+  date: string;
+  score: number; // out of 200
+  notes?: string;
+}
+

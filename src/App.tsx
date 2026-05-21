@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Home, BookOpen, Clock, CheckSquare, Heart, Settings as SettingsIcon } from 'lucide-react';
 
-import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, BucketItem, UserProfile } from './types';
+import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, BucketItem, UserProfile, DailyLog, MockTest } from './types';
 import { DEFAULT_SYLLABUS } from './data/syllabus';
 import { stateStorage } from './db/storage';
 import { audioSynthesizer } from './components/AudioSynthesizer';
@@ -112,11 +112,28 @@ export const App: React.FC = () => {
     stateStorage.get<boolean>('dark_mode', false)
   );
 
+  const [dailyLogs, setDailyLogs] = useState<DailyLog[]>(() =>
+    stateStorage.get<DailyLog[]>('daily_logs', [
+      { date: '2026-05-18', hours: 5.5, topicsCompleted: 2 },
+      { date: '2026-05-19', hours: 6.0, topicsCompleted: 3 },
+      { date: '2026-05-20', hours: 4.5, topicsCompleted: 1 }
+    ])
+  );
+
+  const [mockTests, setMockTests] = useState<MockTest[]>(() =>
+    stateStorage.get<MockTest[]>('mock_tests', [
+      { id: 'mock-1', date: '2026-05-15', score: 135, notes: 'Felt good in English, Quant needs speed.' },
+      { id: 'mock-2', date: '2026-05-19', score: 142, notes: 'Polity questions got fully correct! 🌸' }
+    ])
+  );
+
   // Sync state changes with LocalStorage
   useEffect(() => { stateStorage.set('syllabus', syllabus); }, [syllabus]);
   useEffect(() => { stateStorage.set('todos', todos); }, [todos]);
   useEffect(() => { stateStorage.set('bucket', bucketList); }, [bucketList]);
   useEffect(() => { stateStorage.set('streak', streak); }, [streak]);
+  useEffect(() => { stateStorage.set('daily_logs', dailyLogs); }, [dailyLogs]);
+  useEffect(() => { stateStorage.set('mock_tests', mockTests); }, [mockTests]);
   
   useEffect(() => { 
     stateStorage.set('profile', { ...profile, streak }); 
@@ -213,6 +230,27 @@ export const App: React.FC = () => {
     // Future stats tracker database insertions can happen here
   };
 
+  const handleLogDailyStudy = (hours: number, topicsCompleted: number) => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    setDailyLogs(prev => {
+      const existing = prev.find(l => l.date === todayStr);
+      if (existing) {
+        return prev.map(l => l.date === todayStr ? { ...l, hours: l.hours + hours, topicsCompleted: l.topicsCompleted + topicsCompleted } : l);
+      }
+      return [...prev, { date: todayStr, hours, topicsCompleted }];
+    });
+  };
+
+  const handleAddMockTest = (score: number, notes?: string) => {
+    const newMock: MockTest = {
+      id: `mock_${Date.now()}`,
+      date: new Date().toISOString().split('T')[0],
+      score,
+      notes
+    };
+    setMockTests(prev => [newMock, ...prev]);
+  };
+
   // Backup Sync Imports/Exports
   const getFullBackupString = () => {
     return JSON.stringify({
@@ -222,7 +260,9 @@ export const App: React.FC = () => {
       streak,
       profile,
       theme,
-      isDarkMode
+      isDarkMode,
+      dailyLogs,
+      mockTests
     });
   };
 
@@ -236,6 +276,8 @@ export const App: React.FC = () => {
       if (data.profile) setProfile(data.profile);
       if (data.theme) setTheme(data.theme);
       if (data.isDarkMode !== undefined) setIsDarkMode(data.isDarkMode);
+      if (data.dailyLogs) setDailyLogs(data.dailyLogs);
+      if (data.mockTests) setMockTests(data.mockTests);
 
       // Force instant write
       setTimeout(() => {
@@ -254,6 +296,8 @@ export const App: React.FC = () => {
     stateStorage.remove('profile');
     stateStorage.remove('theme');
     stateStorage.remove('dark_mode');
+    stateStorage.remove('daily_logs');
+    stateStorage.remove('mock_tests');
   };
 
   // Render Screen Helper
@@ -266,6 +310,10 @@ export const App: React.FC = () => {
             syllabus={syllabus}
             todos={todos}
             streak={streak}
+            dailyLogs={dailyLogs}
+            mockTests={mockTests}
+            onLogDailyStudy={handleLogDailyStudy}
+            onAddMockTest={handleAddMockTest}
             onNavigate={(tab) => {
               if (tab === 'syllabus') setActiveTab('syllabus');
               if (tab === 'timer') setActiveTab('timer');
@@ -326,7 +374,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <SmartphoneFrame>
+    <SmartphoneFrame dailyLogs={dailyLogs}>
       {/* Screen Scrolling Content Wrapper */}
       <div className="app-content">
         {renderScreen()}
