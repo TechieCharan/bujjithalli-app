@@ -14,7 +14,7 @@ interface FlashcardsViewProps {
 
 // 10 General Study Challenge questions to backfill short PDF uploads
 const STUDY_CHALLENGE_TEMPLATES = [
-  { front: "Who is known as the Father of the Indian Constitution?", back: "Dr. B. R. Ambedkar" },
+  { front: "Who is widely regarded as the principal architect of the Indian Constitution?", back: "Dr. B. R. Ambedkar" },
   { front: "Which article of the Indian Constitution guarantees the Right to Equality?", back: "Article 14" },
   { front: "What is the powerhouse of the cell?", back: "Mitochondria" },
   { front: "What is the value of acceleration due to gravity on Earth's surface?", back: "9.8 m/s^2" },

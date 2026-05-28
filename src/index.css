@@ -12,38 +12,45 @@
   --border-radius-cute: 24px;
   --border-radius-pill: 999px;
   --border-radius-card: 20px;
+  /* Frame & outer shell defaults (overridden by themes) */
+  --frame-bg: #1e1e1e;
+  --frame-border: #2d2d2d;
 }
 
 /* --- THEMES --- */
 
 /* 1. Cozy Room Theme 🌸 */
 .theme-cozy-room {
-  --bg-primary: #fff0f3;
-  --bg-secondary: #ffe3e8;
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 182, 193, 0.4);
-  --text-primary: #5c374c;
-  --text-secondary: #8c5d79;
-  --accent: #ff9ebb;
-  --accent-hover: #ff7e9e;
-  --accent-light: #fff0f3;
-  --accent-color: #ff9ebb;
-  --theme-color: #ff9ebb;
-  --panel-shadow: 0 8px 32px rgba(255, 182, 193, 0.15);
+  --bg-primary: #f7faf9;
+  --bg-secondary: #eef7f3;
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(140, 200, 185, 0.35);
+  --text-primary: #153b37;
+  --text-secondary: #3b6b66;
+  --accent: #6cb6a6;
+  --accent-hover: #4aa58f;
+  --accent-light: #e7f6f2;
+  --accent-color: #6cb6a6;
+  --theme-color: #6cb6a6;
+  --panel-shadow: 0 8px 32px rgba(108, 182, 162, 0.12);
+  --frame-bg: var(--bg-secondary);
+  --frame-border: rgba(0, 0, 0, 0.06);
 }
 
 .theme-cozy-room.dark-mode {
-  --bg-primary: #21151a;
-  --bg-secondary: #2f1e25;
-  --glass-bg: rgba(38, 25, 31, 0.8);
-  --glass-border: rgba(255, 182, 193, 0.15);
-  --text-primary: #ffd6e0;
-  --text-secondary: #b891a2;
-  --accent: #ff85a1;
-  --accent-hover: #ff5c8a;
-  --accent-light: rgba(255, 133, 161, 0.08);
-  --theme-color: #ff85a1;
-  --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --bg-primary: #0f2622;
+  --bg-secondary: #132f2b;
+  --glass-bg: rgba(18, 34, 31, 0.82);
+  --glass-border: rgba(108, 182, 162, 0.12);
+  --text-primary: #dff7ef;
+  --text-secondary: #8fbfb3;
+  --accent: #58a789;
+  --accent-hover: #3f8f74;
+  --accent-light: rgba(92, 182, 154, 0.08);
+  --theme-color: #58a789;
+  --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+  --frame-bg: #160f12;
+  --frame-border: rgba(255, 182, 193, 0.15);
 }
 
 /* 2. Dreamy Night Sky 🌙 */
@@ -60,6 +67,8 @@
   --accent-color: #ac94f4;
   --theme-color: #ac94f4;
   --panel-shadow: 0 8px 32px rgba(186, 170, 255, 0.15);
+  --frame-bg: var(--bg-secondary);
+  --frame-border: rgba(0, 0, 0, 0.06);
 }
 
 .theme-night-sky.dark-mode {
@@ -74,6 +83,8 @@
   --accent-light: rgba(172, 148, 244, 0.08);
   --theme-color: #9d82f3;
   --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --frame-bg: #07071a;
+  --frame-border: rgba(172, 148, 244, 0.12);
 }
 
 /* 3. Nature Rain 🍃 */
@@ -90,6 +101,8 @@
   --accent-color: #6cdba2;
   --theme-color: #6cdba2;
   --panel-shadow: 0 8px 32px rgba(167, 243, 208, 0.15);
+  --frame-bg: var(--bg-secondary);
+  --frame-border: rgba(0, 0, 0, 0.06);
 }
 
 .theme-nature-rain.dark-mode {
@@ -104,6 +117,8 @@
   --accent-light: rgba(108, 219, 162, 0.08);
   --theme-color: #52ce90;
   --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --frame-bg: #07130d;
+  --frame-border: rgba(108, 219, 162, 0.12);
 }
 
 /* 4. Pastel Study Desk 📝 */
@@ -120,6 +135,8 @@
   --accent-color: #f5b041;
   --theme-color: #f5b041;
   --panel-shadow: 0 8px 32px rgba(245, 176, 65, 0.1);
+  --frame-bg: var(--bg-secondary);
+  --frame-border: rgba(0, 0, 0, 0.06);
 }
 
 .theme-study-desk.dark-mode {
@@ -134,6 +151,8 @@
   --accent-light: rgba(245, 176, 65, 0.08);
   --theme-color: #eb9e22;
   --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --frame-bg: #141108;
+  --frame-border: rgba(245, 176, 65, 0.12);
 }
 
 /* 5. Ocean Breeze 🌊 */
@@ -150,6 +169,8 @@
   --accent-color: #6ebdec;
   --theme-color: #6ebdec;
   --panel-shadow: 0 8px 32px rgba(186, 230, 253, 0.15);
+  --frame-bg: var(--bg-secondary);
+  --frame-border: rgba(0, 0, 0, 0.06);
 }
 
 .theme-ocean-breeze.dark-mode {
@@ -164,6 +185,8 @@
   --accent-light: rgba(110, 189, 236, 0.08);
   --theme-color: #52ade4;
   --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --frame-bg: #05141a;
+  --frame-border: rgba(110, 189, 236, 0.12);
 }
 
 /* --- BASE STYLES --- */
@@ -176,8 +199,8 @@
 
 body {
   font-family: var(--font-main);
-  background-color: #f7f9fa;
-  color: #333;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -209,14 +232,14 @@ button, input, select, textarea {
 .phone-simulator-frame {
   width: 420px;
   height: 860px;
-  background: #1e1e1e;
+  background: var(--frame-bg);
   border-radius: 48px;
   padding: 13px;
   box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 4px solid #2d2d2d;
+  border: 4px solid var(--frame-border);
 }
 
 /* Camera punch-hole */

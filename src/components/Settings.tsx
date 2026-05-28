@@ -138,7 +138,7 @@ export const Settings: React.FC<SettingsProps> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {/* Themes list */}
           {[
-            { id: 'cozy-room', name: 'Cozy Room 🌸', color1: '#ff9ebb', color2: '#fff0f3' },
+            { id: 'cozy-room', name: 'Cozy Neutral 🌿', color1: '#6cb6a6', color2: '#e7f6f2' },
             { id: 'night-sky', name: 'Dreamy Night Sky 🌙', color1: '#ac94f4', color2: '#f0f0ff' },
             { id: 'nature-rain', name: 'Nature Rain 🍃', color1: '#6cdba2', color2: '#f0fcf4' },
             { id: 'study-desk', name: 'Pastel Study Desk 📝', color1: '#f5b041', color2: '#fffdf5' },
