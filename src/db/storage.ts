@@ -1,6 +1,6 @@
-// Offline-first storage adapter for Bujjithalli Productivity App
+// Offline-first storage adapter for learning-loop
 
-const DB_NAME = 'BujjithalliDB';
+const DB_NAME = 'learning-loop';
 const DB_VERSION = 2;
 const PHOTO_STORE = 'bucket_photos';
 const MUSIC_STORE = 'music_tracks';
@@ -97,7 +97,7 @@ export const photoStorage = {
 export const stateStorage = {
   get<T>(key: string, defaultValue: T): T {
     try {
-      const item = localStorage.getItem(`bujjithalli_${key}`);
+      const item = localStorage.getItem(`learning-loop_${key}`);
       return item ? JSON.parse(item) : defaultValue;
     } catch (error) {
       console.error(`Failed to parse localstorage key "${key}":`, error);
@@ -107,14 +107,14 @@ export const stateStorage = {
 
   set<T>(key: string, value: T): void {
     try {
-      localStorage.setItem(`bujjithalli_${key}`, JSON.stringify(value));
+      localStorage.setItem(`learning-loop_${key}`, JSON.stringify(value));
     } catch (error) {
       console.error(`Failed to set localstorage key "${key}":`, error);
     }
   },
 
   remove(key: string): void {
-    localStorage.removeItem(`bujjithalli_${key}`);
+    localStorage.removeItem(`learning-loop_${key}`);
   }
 };
 

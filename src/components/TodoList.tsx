@@ -28,7 +28,7 @@ export const TodoList: React.FC<TodoListProps> = ({
 
     audioSynthesizer.playChime('complete');
     onAddTodo(taskText, activeCategory, taskPriority, taskDueDate || undefined);
-    
+
     // Reset Form
     setTaskText('');
     setTaskPriority('medium');
@@ -52,7 +52,7 @@ export const TodoList: React.FC<TodoListProps> = ({
 
   // Get current active todos
   const categoryTodos = todos.filter(todo => todo.category === activeCategory);
-  
+
   // Stats
   const totalInCat = categoryTodos.length;
   const doneInCat = categoryTodos.filter(t => t.completed).length;
@@ -111,8 +111,8 @@ export const TodoList: React.FC<TodoListProps> = ({
           </p>
         </div>
 
-        <button 
-          className="btn-cute" 
+        <button
+          className="btn-cute"
           onClick={() => { audioSynthesizer.playChime('click'); setShowAddForm(!showAddForm); }}
           style={{ padding: '8px 12px', fontSize: '11px', borderRadius: '12px' }}
         >
@@ -126,11 +126,11 @@ export const TodoList: React.FC<TodoListProps> = ({
           <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)' }}>
             ✨ Create Category Task
           </h4>
-          
+
           <div>
             <input
               type="text"
-              placeholder="What needs to be done, Bujjithalli?"
+              placeholder="What needs to be done"
               value={taskText}
               onChange={(e) => setTaskText(e.target.value)}
               className="input-cute"
@@ -234,19 +234,19 @@ export const TodoList: React.FC<TodoListProps> = ({
                   }}>
                     {todo.text}
                   </p>
-                  
+
                   <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
                     <span className={`badge badge-${todo.priority}`} style={{ fontSize: '8px', padding: '1px 5px', textTransform: 'capitalize' }}>
                       {todo.priority === 'high' ? '🔥 High' : todo.priority === 'medium' ? '⚡ Med' : '🍃 Low'}
                     </span>
 
                     {todo.dueDate && (
-                      <span 
-                        className="badge" 
-                        style={{ 
-                          backgroundColor: isOverdue ? '#fee2e2' : '#f0f9ff', 
-                          color: isOverdue ? '#ef4444' : '#0284c7', 
-                          fontSize: '8px', 
+                      <span
+                        className="badge"
+                        style={{
+                          backgroundColor: isOverdue ? '#fee2e2' : '#f0f9ff',
+                          color: isOverdue ? '#ef4444' : '#0284c7',
+                          fontSize: '8px',
                           padding: '1px 5px',
                           display: 'flex',
                           alignItems: 'center',
@@ -274,11 +274,11 @@ export const TodoList: React.FC<TodoListProps> = ({
       </div>
 
       {/* Quick Summary Banner */}
-      <div 
-        className="glass-panel" 
-        style={{ 
-          padding: '12px 14px', 
-          background: 'linear-gradient(135deg, var(--accent-light), rgba(255,255,255,0.4))', 
+      <div
+        className="glass-panel"
+        style={{
+          padding: '12px 14px',
+          background: 'linear-gradient(135deg, var(--accent-light), rgba(255,255,255,0.4))',
           border: '1px dashed var(--accent)',
           display: 'flex',
           alignItems: 'center',

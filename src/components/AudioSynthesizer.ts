@@ -10,7 +10,7 @@ class AmbientSynthesizer {
   private lfoGain: GainNode | null = null;
   private isPlaying = false;
   private currentSoundType: 'rain' | 'waves' | 'wind' | 'off' = 'off';
-  private isMutedSetting = localStorage.getItem('bujjithalli_sound_muted') === 'true';
+  private isMutedSetting = localStorage.getItem('learningloop_sound_muted') === 'true';
 
   private initContext() {
     if (!this.ctx) {
@@ -38,8 +38,8 @@ class AmbientSynthesizer {
 
   public setMuted(muted: boolean) {
     this.isMutedSetting = muted;
-    localStorage.setItem('bujjithalli_sound_muted', String(muted));
-    
+    localStorage.setItem('learningloop_sound_muted', String(muted));
+
     // If currently playing white noise soundscape, modulate its gainNode volume to 0 immediately
     if (this.gainNode) {
       const now = this.ctx?.currentTime || 0;
@@ -89,12 +89,12 @@ class AmbientSynthesizer {
       this.noiseNode.connect(this.filterNode);
       this.filterNode.connect(this.gainNode);
       this.gainNode.connect(this.ctx.destination);
-    } 
+    }
     else if (type === 'waves') {
       // Ocean waves: Modulate the volume slowly using an LFO (0.08Hz sine wave)
       this.filterNode.type = 'lowpass';
       this.filterNode.frequency.value = 400; // Deep ocean rumble
-      
+
       this.lfoNode = this.ctx.createOscillator();
       this.lfoNode.type = 'sine';
       this.lfoNode.frequency.value = 0.08; // One swell every ~12 seconds
@@ -113,7 +113,7 @@ class AmbientSynthesizer {
       this.gainNode.connect(this.ctx.destination);
 
       this.lfoNode.start();
-    } 
+    }
     else if (type === 'wind') {
       // Cozy howling wind: Modulate the filter cutoff frequency with an LFO
       this.filterNode.type = 'bandpass';
@@ -218,7 +218,7 @@ class AmbientSynthesizer {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
       osc.start(now);
       osc.stop(now + 0.8);
-    } 
+    }
     else if (style === 'break') {
       // Relaxing double bell sound
       osc.type = 'triangle';
@@ -231,7 +231,7 @@ class AmbientSynthesizer {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
       osc.start(now);
       osc.stop(now + 0.7);
-    } 
+    }
     else {
       // Cute bubble click
       osc.type = 'sine';

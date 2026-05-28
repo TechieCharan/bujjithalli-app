@@ -30,11 +30,11 @@ interface DashboardProps {
 }
 
 const BUJJI_QUOTES = [
-  "You've got this, Bujjithalli! 💖",
+  "You've got this! 💖",
   "Every small step brings you closer to your dream rank! 👑",
-  "Take a deep breath, Bujjithalli, you are doing amazing! 🌸",
+  "Take a deep breath, you are doing amazing! 🌸",
   "Your dedication is inspiring. Focus and shine! ✨",
-  "Don't stress, Bujjithalli, just do your best! ☕",
+  "Don't stress, just do your best! ☕",
   "Your exam is just a step, but you are a superstar! 🌟",
   "Work hard in silence, let your score make the noise! 📚",
   "You are capable of doing wonderful things! 💕"
@@ -252,7 +252,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     if (isNaN(h) || h <= 0 || isNaN(t) || t < 0) return;
     audioSynthesizer.playChime('complete');
     onLogDailyStudy(h, t);
-    alert('Logged study details for today! Keep up the magic, Bujjithalli! 🌸');
+    alert('Logged study details for today! Keep up the magic');
     setStudyHours('4'); setStudyTopics('1');
   };
 
@@ -269,7 +269,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       mockNotes.trim() || undefined,
       mockSubject || undefined
     );
-    alert(`Mock test logged! Score: ${sc}/200. Proud of you, Bujjithalli! 🏆`);
+    alert(`Mock test logged! Score: ${sc}/200. Proud of you! 🏆`);
     setMockScore('130'); setMockAccuracy(''); setMockTimeTaken('');
     setMockWeakAreas([]); setMockCustomWeak(''); setMockMistakes('');
     setMockNotes(''); setMockSubject(''); setShowAdvancedForm(false);
@@ -386,7 +386,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {dashboardTodos.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '16px 0', color: 'var(--text-secondary)' }}>
             <Heart size={24} style={{ color: 'var(--accent)', marginBottom: '8px', opacity: 0.6 }} />
-            <p style={{ fontSize: '12px' }}>No pending urgent tasks, Bujjithalli!</p>
+            <p style={{ fontSize: '12px' }}>No pending urgent tasks today!</p>
           </div>
         ) : dashboardTodos.map(todo => (
           <div key={todo.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: '12px', background: 'var(--bg-primary)', border: '1.5px solid var(--glass-border)', marginBottom: '8px' }}>
@@ -428,7 +428,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div>
               <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>📅 Study History Logs</span>
               {dailyLogs.length === 0 ? (
-                <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontStyle: 'italic', textAlign: 'center', padding: '10px' }}>No study logs yet. Start logging, Bujjithalli! 🌸</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontStyle: 'italic', textAlign: 'center', padding: '10px' }}>No study logs yet. Start logging</div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '140px', overflowY: 'auto' }}>
                   {[...dailyLogs].reverse().map((log, i) => (

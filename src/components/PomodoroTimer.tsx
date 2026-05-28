@@ -12,12 +12,12 @@ interface PomodoroTimerProps {
 }
 
 const MOTIVATIONAL_QUOTES = [
-  "You've got this, Bujjithalli! 💖",
-  "Focus on the process, not the results! ✨",
-  "Take it one breath at a time. 🌸",
-  "Your future self will thank you for this focus! 💕",
-  "Deep breaths. Inhale confidence, exhale doubt! 👑",
-  "Doing great! Enjoy this calm focus session. ☕"
+  "You've got this",
+  "Focus on the process, not the results",
+  "Take it one breath at a time. ",
+  "Your future self will thank you for this focus! ",
+  "Deep breaths. Inhale confidence, exhale doubt! ",
+  "Doing great! Enjoy this calm focus session."
 ];
 
 export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
@@ -34,7 +34,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   const [activeMode, setActiveMode] = useState<'focus' | 'short_break' | 'long_break'>('focus');
   const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
   const [isRunning, setIsRunning] = useState<boolean>(false);
-  
+
   // Audio Synthesizer State
   const [activeSound, setActiveSound] = useState<'rain' | 'waves' | 'wind' | 'off'>('off');
   const [isMutedGlobal, setIsMutedGlobal] = useState<boolean>(() => audioSynthesizer.getMuted());
@@ -47,7 +47,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       audioSynthesizer.playChime('click');
     }
   };
-  
+
   // Custom Settings Open
   const [showConfig, setShowConfig] = useState<boolean>(false);
   const [customFocus, setCustomFocus] = useState<number>(25);
@@ -84,17 +84,17 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
 
   const handleTimerComplete = () => {
     setIsRunning(false);
-    
+
     // Play chime sound
     if (activeMode === 'focus') {
       audioSynthesizer.playChime('complete');
       onIncrementStreak();
       onLogSession(Math.round(focusDuration / 60), 'focus');
-      alert("Wonderful job, Bujjithalli! 🌸 You completed your study session! Take a sweet break now.");
+      alert("Wonderful job! You completed your study session! Take a sweet break now.");
     } else {
       audioSynthesizer.playChime('break');
       onLogSession(Math.round(activeMode === 'short_break' ? shortDuration / 60 : longDuration / 60), activeMode);
-      alert("Break is over, Bujjithalli! ☕ Ready to focus again?");
+      alert("Break is over! Ready to focus again?");
     }
 
     resetTimer();
@@ -108,7 +108,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   const resetTimer = () => {
     setIsRunning(false);
     if (timerRef.current) clearInterval(timerRef.current);
-    
+
     if (activeMode === 'focus') setTimeLeft(focusDuration);
     else if (activeMode === 'short_break') setTimeLeft(shortDuration);
     else setTimeLeft(longDuration);
@@ -160,16 +160,16 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       return (
         <div className="aesthetic-animation-overlay">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div 
-              key={i} 
-              className="blossom-petal" 
+            <div
+              key={i}
+              className="blossom-petal"
               style={{
                 left: `${Math.random() * 80}%`,
                 top: `${-20 - Math.random() * 40}px`,
                 animationDelay: `${i * 2}s`,
                 width: `${10 + Math.random() * 12}px`,
                 height: `${10 + Math.random() * 12}px`
-              }} 
+              }}
             />
           ))}
         </div>
@@ -179,15 +179,15 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       return (
         <div className="aesthetic-animation-overlay">
           {Array.from({ length: 15 }).map((_, i) => (
-            <div 
-              key={i} 
-              className="rain-drop" 
+            <div
+              key={i}
+              className="rain-drop"
               style={{
                 left: `${Math.random() * 95}%`,
                 top: `-50px`,
                 animationDelay: `${Math.random() * 2.5}s`,
                 animationDuration: `${1.2 + Math.random() * 0.8}s`
-              }} 
+              }}
             />
           ))}
         </div>
@@ -197,9 +197,9 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       return (
         <div className="aesthetic-animation-overlay">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div 
-              key={i} 
-              className="star-twinkle" 
+            <div
+              key={i}
+              className="star-twinkle"
               style={{
                 left: `${Math.random() * 95}%`,
                 top: `${Math.random() * 80}%`,
@@ -207,7 +207,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
                 height: `${2 + Math.random() * 4}px`,
                 animationDelay: `${Math.random() * 3}s`,
                 animationDuration: `${2 + Math.random() * 2}s`
-              }} 
+              }}
             />
           ))}
         </div>
@@ -261,8 +261,8 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       {/* Main Focus Ring Countdown Gauge */}
       <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px', position: 'relative' }}>
         {/* Custom duration configure cog */}
-        <button 
-          className="btn-circle" 
+        <button
+          className="btn-circle"
           onClick={() => { audioSynthesizer.playChime('click'); setShowConfig(true); }}
           style={{ position: 'absolute', top: '16px', right: '16px', width: '32px', height: '32px' }}
         >
@@ -305,24 +305,24 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
 
         {/* Action Controls */}
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '10px' }}>
-          <button 
-            className="btn-circle" 
+          <button
+            className="btn-circle"
             style={{ width: '48px', height: '48px', color: 'var(--text-secondary)' }}
             onClick={() => { audioSynthesizer.playChime('click'); resetTimer(); }}
           >
             <RotateCcw size={20} />
           </button>
-          
-          <button 
-            className="btn-cute" 
+
+          <button
+            className="btn-cute"
             style={{ padding: '14px 28px', fontSize: '16px', borderRadius: '30px', width: '130px', boxShadow: '0 6px 20px rgba(0,0,0,0.1)' }}
             onClick={toggleTimer}
           >
             {isRunning ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
             {isRunning ? 'Pause' : 'Focus'}
           </button>
-          
-          <div 
+
+          <div
             style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--accent-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-hover)' }}
           >
             <Flame size={20} fill="var(--accent)" stroke="none" />
@@ -345,11 +345,11 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
             onClick={toggleMuteGlobal}
             className="btn-circle"
             title={isMutedGlobal ? "Unmute All" : "Mute All"}
-            style={{ 
-              width: '28px', 
-              height: '28px', 
-              display: 'flex', 
-              alignItems: 'center', 
+            style={{
+              width: '28px',
+              height: '28px',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: isMutedGlobal ? 'rgba(239, 68, 68, 0.15)' : 'var(--glass-bg)',
               borderColor: isMutedGlobal ? '#ef4444' : 'var(--glass-border)',

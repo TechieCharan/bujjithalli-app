@@ -51,7 +51,7 @@ const extractTextFromPDF = async (arrayBuffer: ArrayBuffer): Promise<string> => 
   const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
   const pdf = await loadingTask.promise;
   let fullText = '';
-  
+
   // Extract up to 10 pages for speed/safety
   const numPages = Math.min(pdf.numPages, 10);
   for (let i = 1; i <= numPages; i++) {
@@ -197,7 +197,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
     };
 
     onAddSet(newSet);
-    
+
     // Reset state and exit
     setSetName('');
     setSetDesc('');
@@ -285,7 +285,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
           parsed.push({ front: cleanLine, back: '...' });
         }
       });
-    } 
+    }
     else if (strategy === 'summarize') {
       const paragraphs = text.split(/\n+/);
       paragraphs.forEach((para) => {
@@ -313,7 +313,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
           }
         });
       });
-    } 
+    }
     else if (strategy === 'cloze') {
       const sentences = text.split(/(?<=[.!?])\s+/);
       sentences.forEach((sentence) => {
@@ -352,7 +352,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
           }
         }
       });
-    } 
+    }
     else if (strategy === 'qa') {
       const sentences = text.split(/(?<=[.!?])\s+/);
       for (let i = 0; i < sentences.length; i++) {
@@ -403,7 +403,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
         }
       };
       reader.readAsArrayBuffer(file);
-    } 
+    }
     else if (file.name.endsWith('.json')) {
       audioSynthesizer.playChime('complete');
       const reader = new FileReader();
@@ -430,7 +430,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
         }
       };
       reader.readAsText(file);
-    } 
+    }
     else if (file.name.endsWith('.csv')) {
       audioSynthesizer.playChime('complete');
       const reader = new FileReader();
@@ -439,7 +439,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
           const content = event.target?.result as string;
           const rows = content.split('\n');
           const parsed: { front: string; back: string }[] = [];
-          
+
           rows.forEach(row => {
             if (!row.trim()) return;
             const cols = row.split(',');
@@ -455,7 +455,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
         }
       };
       reader.readAsText(file);
-    } 
+    }
     else {
       audioSynthesizer.playChime('complete');
       const reader = new FileReader();
@@ -529,7 +529,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
   // --- Automatic 10-Question Challenge Quiz compiler ---
   const handleLaunch10QuestionChallenge = () => {
     audioSynthesizer.playChime('complete');
-    
+
     const validCards = extractedPreviewCards
       .filter(c => c.front.trim() && c.back.trim());
 
@@ -540,11 +540,11 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
 
     // 1. Gather 10 challenge cards
     let finalChallengeCards = [...validCards];
-    
+
     // Slice if longer than 10
     if (finalChallengeCards.length > 10) {
       finalChallengeCards = finalChallengeCards.sort(() => Math.random() - 0.5).slice(0, 10);
-    } 
+    }
     // Backfill templates if shorter than 10
     else if (finalChallengeCards.length < 10) {
       const neededCount = 10 - finalChallengeCards.length;
@@ -601,7 +601,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
       const otherAnswers = mappedCards
         .filter(c => c.id !== card.id)
         .map(c => c.back);
-      
+
       const shuffledDistractors = otherAnswers.sort(() => Math.random() - 0.5);
       const chosenDistractors = shuffledDistractors.slice(0, 3);
       const options = [correctAnswer, ...chosenDistractors].sort(() => Math.random() - 0.5);
@@ -643,10 +643,10 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
     if (mastered) {
       audioSynthesizer.playChime('click');
       setStudyRightCount(prev => prev + 1);
-      
+
       if (activeSet) {
         const currentCard = studyQueue[studyCardIndex];
-        const updatedCards = activeSet.cards.map(c => 
+        const updatedCards = activeSet.cards.map(c =>
           c.id === currentCard.id ? { ...c, status: 'mastered' as const, lastStudied: Date.now() } : c
         );
         onUpdateSetCards(activeSet.id, updatedCards);
@@ -654,10 +654,10 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
     } else {
       audioSynthesizer.playChime('click');
       setStudyWrongCount(prev => prev + 1);
-      
+
       if (activeSet) {
         const currentCard = studyQueue[studyCardIndex];
-        const updatedCards = activeSet.cards.map(c => 
+        const updatedCards = activeSet.cards.map(c =>
           c.id === currentCard.id ? { ...c, status: 'learning' as const, lastStudied: Date.now() } : c
         );
         onUpdateSetCards(activeSet.id, updatedCards);
@@ -735,12 +735,12 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
 
     setShowConfigTimer(false);
     setQuizStrategy(strategy);
-    
+
     // 0 timer setup means No Timer
     const actualTimeLimit = secondsPerQuestion === 0 ? 9999 : secondsPerQuestion;
     setQuizTimeLimit(actualTimeLimit);
     setQuizTimer(actualTimeLimit);
-    
+
     setQuizIndex(0);
     setQuizSelectedOption(null);
     setQuizIsLocked(false);
@@ -754,7 +754,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
 
     if (strategy === 'matching') {
       setupMatchingPairsRound(studyCards, 0);
-      
+
       const dummyQuestions = studyCards.map(c => ({
         id: c.id,
         question: c.front,
@@ -771,7 +771,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
       const otherAnswers = set.cards
         .filter(c => c.id !== card.id)
         .map(c => c.back);
-      
+
       const shuffledDistractors = otherAnswers.sort(() => Math.random() - 0.5);
       const chosenDistractors = shuffledDistractors.slice(0, 3);
       const options = [correctAnswer, ...chosenDistractors].sort(() => Math.random() - 0.5);
@@ -916,7 +916,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
 
     if (prevTile.originalCardId === tile.originalCardId && prevTile.type !== tile.type) {
       audioSynthesizer.playChime('complete');
-      setMatchingTiles(prev => prev.map(t => 
+      setMatchingTiles(prev => prev.map(t =>
         (t.id === tile.id || t.id === prevTile.id) ? { ...t, matched: true } : t
       ));
       setSelectedTileId(null);
@@ -944,14 +944,14 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
       }
     } else {
       audioSynthesizer.playChime('break');
-      setMatchingTiles(prev => prev.map(t => 
+      setMatchingTiles(prev => prev.map(t =>
         (t.id === tile.id || t.id === prevTile.id) ? { ...t, wrong: true } : t
       ));
       setSelectedTileId(null);
       setQuizAnswers(prev => [...prev, { isCorrect: false, timeSpent: 2 }]);
 
       setTimeout(() => {
-        setMatchingTiles(prev => prev.map(t => 
+        setMatchingTiles(prev => prev.map(t =>
           (t.id === tile.id || t.id === prevTile.id) ? { ...t, wrong: false } : t
         ));
       }, 400);
@@ -960,7 +960,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
 
   const finishMatchingQuizGame = () => {
     audioSynthesizer.playChime('complete');
-    
+
     const totalQuestions = quizQuestions.length;
     const totalAttemptsCount = quizAnswers.length;
     const totalCorrect = totalQuestions;
@@ -1051,14 +1051,14 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
 
   // --- STATS COMPUTATIONS (Efficiency tracker) ---
   const totalAttempts = quizAttempts.length;
-  const avgAccuracy = totalAttempts > 0 
-    ? Math.round(quizAttempts.reduce((acc, curr) => acc + curr.accuracy, 0) / totalAttempts) 
+  const avgAccuracy = totalAttempts > 0
+    ? Math.round(quizAttempts.reduce((acc, curr) => acc + curr.accuracy, 0) / totalAttempts)
     : 0;
-  const avgSpeed = totalAttempts > 0 
-    ? Number((quizAttempts.reduce((acc, curr) => acc + curr.averageSpeed, 0) / totalAttempts).toFixed(1)) 
+  const avgSpeed = totalAttempts > 0
+    ? Number((quizAttempts.reduce((acc, curr) => acc + curr.averageSpeed, 0) / totalAttempts).toFixed(1))
     : 0;
-  const avgEfficiency = totalAttempts > 0 
-    ? Math.round(quizAttempts.reduce((acc, curr) => acc + curr.efficiencyScore, 0) / totalAttempts) 
+  const avgEfficiency = totalAttempts > 0
+    ? Math.round(quizAttempts.reduce((acc, curr) => acc + curr.efficiencyScore, 0) / totalAttempts)
     : 0;
 
   // Grade helper
@@ -1128,7 +1128,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
             const masteredCount = set.cards.filter(c => c.status === 'mastered').length;
             const progressPct = set.cards.length > 0 ? (masteredCount / set.cards.length) * 100 : 0;
             const isSetChallenge = set.category === 'Challenge 🏆';
-            
+
             return (
               <div
                 key={set.id}
@@ -1215,9 +1215,9 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
 
       {/* Mini summary card linking to tracking */}
       {quizAttempts.length > 0 && (
-        <div 
+        <div
           onClick={() => { audioSynthesizer.playChime('click'); setActiveView('efficiency'); }}
-          className="glass-panel" 
+          className="glass-panel"
           style={{ justifySelf: 'center', margin: 0, padding: '12px 16px', cursor: 'pointer', border: '1.5px dashed var(--accent)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1295,7 +1295,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
                 <div className="flashcard-back glass-panel">
                   <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--accent)', opacity: 0.7, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px' }}>Definition</span>
                   <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', textAlign: 'center', overflowY: 'auto', maxHeight: '80%', padding: '0 8px', lineBreak: 'anywhere' }}>{currentCard.back}</div>
-                  <span style={{ position: 'absolute', bottom: '12px', fontSize: '9px', color: 'var(--accent)', opacity: 0.7, fontWeight: 700 }}>🌸 Bujjithalli Study Desk</span>
+                  <span style={{ position: 'absolute', bottom: '12px', fontSize: '9px', color: 'var(--accent)', opacity: 0.7, fontWeight: 700 }}>Study Desk</span>
                 </div>
               </div>
             </div>
@@ -1329,7 +1329,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
     const renderQuizResults = () => {
       const totalCorrect = quizStrategy === 'matching' ? quizQuestions.length : quizAnswers.filter(a => a.isCorrect).length;
       const totalQuestions = quizQuestions.length;
-      const accuracy = quizStrategy === 'matching' 
+      const accuracy = quizStrategy === 'matching'
         ? (quizAnswers.length > 0 ? Math.round((totalCorrect / quizAnswers.length) * 100) : 100)
         : (totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0);
       const totalTime = quizTimeSpentTotal;
@@ -1343,7 +1343,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
           <h2 style={{ fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', fontSize: '20px', fontWeight: 800 }}>
             {getStrategyLabel()} Completed!
           </h2>
-          
+
           <div style={{ padding: '8px 18px', background: 'var(--bg-secondary)', borderRadius: '14px', border: '1px solid var(--glass-border)' }}>
             <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block' }}>RATING GRADE</span>
             <span style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)' }}>
@@ -1404,15 +1404,15 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
                   ⏳ Time Elapsed: {quizTimeSpentTotal}s
                 </span>
               </div>
-              
+
               <div style={{ height: '5px', width: '100%', backgroundColor: 'var(--bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div 
-                  style={{ 
-                    height: '100%', 
-                    width: `${(quizAnswers.filter(a => a.isCorrect).length / quizQuestions.length) * 100}%`, 
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${(quizAnswers.filter(a => a.isCorrect).length / quizQuestions.length) * 100}%`,
                     backgroundColor: 'var(--accent)',
                     transition: 'width 0.4s ease'
-                  }} 
+                  }}
                 />
               </div>
 
@@ -1482,32 +1482,32 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
                   </span>
                 )}
               </div>
-              
+
               {quizTimeLimit < 100 && (
                 <div style={{ height: '5px', width: '100%', backgroundColor: 'var(--bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div 
-                    style={{ 
-                      height: '100%', 
-                      width: `${(quizTimer / quizTimeLimit) * 100}%`, 
-                      backgroundColor: quizTimer <= 4 ? '#e11d48' : quizTimer <= 8 ? '#f5b041' : '#10b981', 
-                      transition: 'width 1s linear' 
-                    }} 
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${(quizTimer / quizTimeLimit) * 100}%`,
+                      backgroundColor: quizTimer <= 4 ? '#e11d48' : quizTimer <= 8 ? '#f5b041' : '#10b981',
+                      transition: 'width 1s linear'
+                    }}
                   />
                 </div>
               )}
             </div>
 
             {/* Question card */}
-            <div 
-              className={`glass-panel ${isChallengeMode ? 'challenge-box-glow' : ''}`} 
-              style={{ 
-                padding: '24px 16px', 
-                minHeight: '120px', 
-                display: 'flex', 
+            <div
+              className={`glass-panel ${isChallengeMode ? 'challenge-box-glow' : ''}`}
+              style={{
+                padding: '24px 16px',
+                minHeight: '120px',
+                display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                textAlign: 'center', 
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
                 position: 'relative',
                 border: isChallengeMode ? '2px solid #f5b041' : '1.5px solid var(--glass-border)',
                 boxShadow: isChallengeMode ? '0 0 15px rgba(245, 176, 65, 0.22)' : 'var(--panel-shadow)'
@@ -1538,7 +1538,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
                   const isCorrect = opt === currentQuestion.correctAnswer;
                   const showWrongFeedback = quizIsLocked && isSelected && !isCorrect;
                   const showRightFeedback = quizIsLocked && isCorrect;
-                  
+
                   let optStyle: React.CSSProperties = {
                     width: '100%',
                     padding: '12px 14px',
@@ -1582,16 +1582,16 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
 
             {quizStrategy === 'tf' && (
               <div className="tf-buttons" style={{ marginTop: 'auto' }}>
-                <button 
-                  className="btn-tf btn-tf-false" 
+                <button
+                  className="btn-tf btn-tf-false"
                   onClick={() => handleTfAnswer(false)}
                   disabled={quizIsLocked}
                   style={quizIsLocked && quizSelectedOption === 'false' && !tfStatementCorrect ? { borderWidth: '2.5px' } : {}}
                 >
                   ❌ FALSE
                 </button>
-                <button 
-                  className="btn-tf btn-tf-true" 
+                <button
+                  className="btn-tf btn-tf-true"
                   onClick={() => handleTfAnswer(true)}
                   disabled={quizIsLocked}
                   style={quizIsLocked && quizSelectedOption === 'true' && tfStatementCorrect ? { borderWidth: '2.5px' } : {}}
@@ -1654,7 +1654,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
                     <span style={{ fontSize: '8px', fontWeight: 800, color: 'var(--text-secondary)', marginBottom: '3px' }}>HINT CHARACTER GRID:</span>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '2px' }}>
                       {currentQuestion.correctAnswer.charAt(0).toUpperCase()}
-                      {Array(Math.max(1, currentQuestion.correctAnswer.length - 1)).fill('_').join(' ')} 
+                      {Array(Math.max(1, currentQuestion.correctAnswer.length - 1)).fill('_').join(' ')}
                       &nbsp;({currentQuestion.correctAnswer.length} letters)
                     </span>
                   </div>
@@ -1706,29 +1706,29 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
             <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <TrendingUp size={12} style={{ color: 'var(--accent)' }} /> Learning Efficiency History (Last 7 Attempts)
             </span>
-            
+
             <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end', height: '100px', padding: '10px 0 2px 0', borderBottom: '1px dashed var(--glass-border)' }}>
               {quizAttempts.slice(0, 7).reverse().map((att, idx) => (
-                <div 
-                  key={idx} 
-                  style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    width: '24px', 
-                    position: 'relative' 
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '24px',
+                    position: 'relative'
                   }}
                   title={`Quiz: ${att.setTitle}\nEfficiency: ${att.efficiencyScore}%\nSpeed: ${att.averageSpeed}s`}
                 >
                   <span style={{ fontSize: '7px', fontWeight: 800, color: 'var(--text-secondary)', marginBottom: '3px' }}>{att.efficiencyScore}</span>
-                  <div 
-                    style={{ 
-                      height: `${Math.max(8, att.efficiencyScore * 0.7)}px`, 
-                      width: '12px', 
-                      backgroundColor: att.efficiencyScore >= 80 ? '#10b981' : att.efficiencyScore >= 60 ? 'var(--accent)' : '#eb9e22', 
+                  <div
+                    style={{
+                      height: `${Math.max(8, att.efficiencyScore * 0.7)}px`,
+                      width: '12px',
+                      backgroundColor: att.efficiencyScore >= 80 ? '#10b981' : att.efficiencyScore >= 60 ? 'var(--accent)' : '#eb9e22',
                       borderRadius: '4px 4px 0 0',
                       transition: 'height 0.8s ease-out'
-                    }} 
+                    }}
                   />
                   <span style={{ fontSize: '7px', color: 'var(--text-secondary)', marginTop: '4px', fontWeight: 700 }}>#{idx + 1}</span>
                 </div>
@@ -1992,7 +1992,7 @@ Q: What is a noun? A: A person, place, or thing.`}
               className="input-cute"
               style={{ padding: '6px 10px', fontSize: '12px' }}
             />
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <input
                 type="text"
@@ -2027,7 +2027,7 @@ Q: What is a noun? A: A person, place, or thing.`}
                   <Trash2 size={11} className="delete-icon-hover" />
                 </button>
                 <span style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-secondary)' }}>Preview Card #{idx + 1}</span>
-                
+
                 <input
                   type="text"
                   value={card.front}
@@ -2048,15 +2048,15 @@ Q: What is a noun? A: A person, place, or thing.`}
 
           {/* Sideloaded Timed Challenge launcher */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <button 
-              className="btn-cute animate-pulse" 
+            <button
+              className="btn-cute animate-pulse"
               onClick={handleLaunch10QuestionChallenge}
               style={{ padding: '12px', background: 'var(--accent)', border: 'none', color: 'white', display: 'flex', gap: '6px', justifyContent: 'center' }}
             >
               <Sparkles size={14} /> Launch 10-Q Challenge! 🏆
             </button>
-            <button 
-              className="btn-cute btn-cute-secondary" 
+            <button
+              className="btn-cute btn-cute-secondary"
               onClick={handleSaveImportedSet}
               style={{ padding: '10px' }}
             >
@@ -2112,12 +2112,12 @@ Q: What is a noun? A: A person, place, or thing.`}
                         setQuizStrategy(strat.id);
                       }}
                       className="btn-cute"
-                      style={{ 
+                      style={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        padding: '10px 4px', 
+                        padding: '10px 4px',
                         borderRadius: '16px',
                         backgroundColor: quizStrategy === strat.id ? 'var(--accent)' : 'var(--glass-bg)',
                         color: quizStrategy === strat.id ? 'white' : 'var(--text-primary)',
@@ -2153,9 +2153,9 @@ Q: What is a noun? A: A person, place, or thing.`}
                           setTimerSetupSeconds(sec.val);
                         }}
                         className="btn-cute"
-                        style={{ 
-                          flex: 1, 
-                          padding: '8px 0', 
+                        style={{
+                          flex: 1,
+                          padding: '8px 0',
                           borderRadius: '12px',
                           backgroundColor: timerSetupSeconds === sec.val ? 'var(--accent)' : 'var(--glass-bg)',
                           color: timerSetupSeconds === sec.val ? 'white' : 'var(--text-primary)',
@@ -2191,9 +2191,9 @@ Q: What is a noun? A: A person, place, or thing.`}
                           setQuestionLimit(val);
                         }}
                         className="btn-cute"
-                        style={{ 
-                          flex: 1, 
-                          padding: '8px 0', 
+                        style={{
+                          flex: 1,
+                          padding: '8px 0',
                           borderRadius: '12px',
                           backgroundColor: isSelected ? 'var(--accent)' : 'var(--glass-bg)',
                           color: isSelected ? 'white' : 'var(--text-primary)',
@@ -2209,9 +2209,9 @@ Q: What is a noun? A: A person, place, or thing.`}
               </div>
 
               {/* Start Button */}
-              <button 
-                className="btn-cute animate-pulse" 
-                style={{ marginTop: '8px', padding: '12px', background: 'var(--accent)', border: 'none', color: 'white' }} 
+              <button
+                className="btn-cute animate-pulse"
+                style={{ marginTop: '8px', padding: '12px', background: 'var(--accent)', border: 'none', color: 'white' }}
                 onClick={() => handleStartQuiz(timerSetupSeconds, quizStrategy, questionLimit)}
               >
                 Launch Game Setup 🌸

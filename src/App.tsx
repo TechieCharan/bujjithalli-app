@@ -59,11 +59,11 @@ const INITIAL_FLASHCARDS: FlashcardSet[] = [
 // Preserves all user study statuses, custom notes, dates, and revision tags.
 const mergeSyllabus = (local: SyllabusSubject[], defaults: SyllabusSubject[]): SyllabusSubject[] => {
   if (!local || local.length === 0) return defaults;
-  
+
   return defaults.map(defaultSubj => {
     const localSubj = local.find(s => s.id === defaultSubj.id);
     if (!localSubj) return defaultSubj;
-    
+
     // Merge topics
     const mergedTopics = defaultSubj.topics.map(defaultTopic => {
       const localTopic = localSubj.topics.find(t => t.id === defaultTopic.id);
@@ -85,12 +85,12 @@ const mergeSyllabus = (local: SyllabusSubject[], defaults: SyllabusSubject[]): S
       // It's a legacy topic if it's not in the default list
       const existsInDefault = defaultSubj.topics.some(t => t.id === localTopic.id);
       if (existsInDefault) return false;
-      
+
       // Keep it only if the user has modified it (completed, added notes, set target date, or revised)
-      const hasProgress = localTopic.status !== 'pending' || 
-                          (localTopic.notes && localTopic.notes.trim() !== '') || 
-                          localTopic.revisionStatus !== 'not_revised' || 
-                          localTopic.targetDate;
+      const hasProgress = localTopic.status !== 'pending' ||
+        (localTopic.notes && localTopic.notes.trim() !== '') ||
+        localTopic.revisionStatus !== 'not_revised' ||
+        localTopic.targetDate;
       return hasProgress;
     }).map(legacyTopic => ({
       ...legacyTopic,
@@ -113,12 +113,12 @@ export const App: React.FC = () => {
     const local = stateStorage.get<SyllabusSubject[]>('syllabus', []);
     return mergeSyllabus(local, DEFAULT_SYLLABUS);
   });
-  
-  const [todos, setTodos] = useState<TodoItem[]>(() => 
+
+  const [todos, setTodos] = useState<TodoItem[]>(() =>
     stateStorage.get<TodoItem[]>('todos', INITIAL_TODOS)
   );
 
-  const [bucketList, setBucketList] = useState<BucketItem[]>(() => 
+  const [bucketList, setBucketList] = useState<BucketItem[]>(() =>
     stateStorage.get<BucketItem[]>('bucket', INITIAL_BUCKET)
   );
 
@@ -130,19 +130,19 @@ export const App: React.FC = () => {
     stateStorage.get<QuizAttempt[]>('quiz_attempts', [])
   );
 
-  const [streak, setStreak] = useState<number>(() => 
+  const [streak, setStreak] = useState<number>(() =>
     stateStorage.get<number>('streak', 0)
   );
 
-  const [profile, setProfile] = useState<UserProfile>(() => 
-    stateStorage.get<UserProfile>('profile', { name: 'Bujjithalli', avatar: '🌸', streak: 0 })
+  const [profile, setProfile] = useState<UserProfile>(() =>
+    stateStorage.get<UserProfile>('profile', { name: 'learning-loop', avatar: '🌸', streak: 0 })
   );
 
-  const [theme, setTheme] = useState<AppTheme>(() => 
+  const [theme, setTheme] = useState<AppTheme>(() =>
     stateStorage.get<AppTheme>('theme', 'cozy-room')
   );
 
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => 
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() =>
     stateStorage.get<boolean>('dark_mode', false)
   );
 
@@ -170,13 +170,13 @@ export const App: React.FC = () => {
   useEffect(() => { stateStorage.set('streak', streak); }, [streak]);
   useEffect(() => { stateStorage.set('daily_logs', dailyLogs); }, [dailyLogs]);
   useEffect(() => { stateStorage.set('mock_tests', mockTests); }, [mockTests]);
-  
-  useEffect(() => { 
-    stateStorage.set('profile', { ...profile, streak }); 
+
+  useEffect(() => {
+    stateStorage.set('profile', { ...profile, streak });
   }, [profile, streak]);
 
-  useEffect(() => { 
-    stateStorage.set('theme', theme); 
+  useEffect(() => {
+    stateStorage.set('theme', theme);
     // Synchronize HTML classes for HSL dynamic themes
     const rootEl = document.documentElement;
     rootEl.className = `theme-${theme}`;

@@ -1,4 +1,4 @@
-package com.bujjithalli.app;
+package com.learningloop.app;
 
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -9,6 +9,6 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }

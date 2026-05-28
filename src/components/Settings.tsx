@@ -46,7 +46,7 @@ export const Settings: React.FC<SettingsProps> = ({
 
     audioSynthesizer.playChime('complete');
     onUpdateProfileName(nameInput.trim());
-    alert("Profile name updated successfully, Bujjithalli! 🌸");
+    alert("Profile name updated successfully");
   };
 
   const handleThemeChange = (theme: AppTheme) => {
@@ -65,7 +65,7 @@ export const Settings: React.FC<SettingsProps> = ({
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(exportDataString);
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `bujjithalli_productivity_backup_${Date.now()}.json`);
+    downloadAnchor.setAttribute("download", `learning-loop_backup_${Date.now()}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -111,7 +111,7 @@ export const Settings: React.FC<SettingsProps> = ({
 
         <div>
           <label style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-            Your Nickname (defaults to Bujjithalli)
+            Your Nickname (defaults to learning-loop)
           </label>
           <div style={{ display: 'flex', gap: '8px' }}>
             <input
@@ -163,7 +163,7 @@ export const Settings: React.FC<SettingsProps> = ({
               <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)' }}>
                 {theme.name}
               </span>
-              
+
               <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                 <div style={{ width: '14px', height: '14px', borderRadius: '50%', backgroundColor: theme.color1, border: '1px solid white' }} />
                 <div style={{ width: '14px', height: '14px', borderRadius: '50%', backgroundColor: theme.color2, border: '1px solid white' }} />
@@ -232,7 +232,7 @@ export const Settings: React.FC<SettingsProps> = ({
         <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <Download size={16} style={{ color: 'var(--accent)' }} /> ☁️ Data Backup & Sync
         </h3>
-        
+
         <p style={{ fontSize: '10px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
           This app operates 100% offline. Save your progress regularly by downloading an encrypted study JSON backup.
         </p>
@@ -241,14 +241,14 @@ export const Settings: React.FC<SettingsProps> = ({
           <button onClick={handleExport} className="btn-cute" style={{ padding: '8px', fontSize: '11px', borderRadius: '12px', display: 'flex', gap: '4px' }}>
             <Download size={12} /> Export Data
           </button>
-          
+
           <label className="btn-cute btn-cute-secondary" style={{ padding: '8px', fontSize: '11px', borderRadius: '12px', display: 'flex', gap: '4px', cursor: 'pointer', justifyContent: 'center' }}>
             <Upload size={12} /> Import Data
-            <input 
-              type="file" 
-              accept=".json" 
-              onChange={handleImportFile} 
-              style={{ display: 'none' }} 
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportFile}
+              style={{ display: 'none' }}
             />
           </label>
         </div>
@@ -261,9 +261,9 @@ export const Settings: React.FC<SettingsProps> = ({
         </h3>
 
         {!showResetConfirm ? (
-          <button 
-            onClick={() => { audioSynthesizer.playChime('click'); setShowResetConfirm(true); }} 
-            className="btn-cute btn-cute-secondary" 
+          <button
+            onClick={() => { audioSynthesizer.playChime('click'); setShowResetConfirm(true); }}
+            className="btn-cute btn-cute-secondary"
             style={{ width: '100%', padding: '8px', fontSize: '11px', color: '#dc2626', borderColor: 'rgba(239, 68, 68, 0.2)' }}
           >
             Reset All Application Data
@@ -274,16 +274,16 @@ export const Settings: React.FC<SettingsProps> = ({
               Are you absolutely sure? This will delete all syllabus notes, todos, study streaks, and bucket list photos!
             </span>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button 
-                onClick={() => setShowResetConfirm(false)} 
-                className="btn-cute btn-cute-secondary" 
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="btn-cute btn-cute-secondary"
                 style={{ flex: 1, padding: '6px', fontSize: '10px' }}
               >
                 No, Keep Data
               </button>
-              <button 
-                onClick={handleFullReset} 
-                className="btn-cute" 
+              <button
+                onClick={handleFullReset}
+                className="btn-cute"
                 style={{ flex: 1, padding: '6px', fontSize: '10px', backgroundColor: '#ef4444' }}
               >
                 Yes, Reset All
@@ -292,11 +292,11 @@ export const Settings: React.FC<SettingsProps> = ({
           </div>
         )}
       </div>
-      
+
       {/* Footer Branding */}
       <div style={{ textAlign: 'center', padding: '14px 0', color: 'var(--text-secondary)' }}>
         <Heart size={16} fill="var(--accent)" stroke="none" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} />
-        <span style={{ fontSize: '11px', fontWeight: 500 }}>Bujjithalli Productivity v1.0.0</span>
+        <span style={{ fontSize: '11px', fontWeight: 500 }}>learning-loop v1.0.0</span>
       </div>
     </div>
   );

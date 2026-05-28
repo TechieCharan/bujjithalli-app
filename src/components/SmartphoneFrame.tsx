@@ -12,9 +12,9 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
   // Compute remaining days to Target Exam (August 25, 2026)
   const examDate = new Date('2026-08-25T00:00:00');
   const today = new Date();
-  examDate.setHours(0,0,0,0);
+  examDate.setHours(0, 0, 0, 0);
   const todayReset = new Date(today);
-  todayReset.setHours(0,0,0,0);
+  todayReset.setHours(0, 0, 0, 0);
   const diffTime = examDate.getTime() - todayReset.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -40,7 +40,7 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
           <span style={{ fontSize: '28px' }}>🌸</span>
           <div>
             <h2 style={{ fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', fontSize: '18px', fontWeight: 700 }}>
-              Bujjithalli Productivity
+              learning-loop
             </h2>
             <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Study Focus Assistant</span>
           </div>
@@ -67,14 +67,14 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
           <div style={{ textAlign: 'center', fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>
             May 2026
           </div>
-          
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
             {weekdays.map(wd => (
               <span key={wd} style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', opacity: 0.7 }}>
                 {wd}
               </span>
             ))}
-            
+
             {/* Empty offset spaces */}
             {Array.from({ length: startDayOffset }).map((_, idx) => (
               <span key={`empty-${idx}`} />
@@ -84,7 +84,7 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
             {daysArray.map(day => {
               const completed = isStudyDayCompleted(day);
               const isToday = day === 21; // Today is May 21, 2026
-              
+
               let cellStyle: React.CSSProperties = {
                 fontSize: '10px',
                 fontWeight: 700,
@@ -134,14 +134,14 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
 
         {/* Cute Illustration Image - Calendar section above the image */}
         <div style={{ position: 'relative', borderRadius: '18px', overflow: 'hidden', border: '1.5px solid var(--glass-border)', boxShadow: 'var(--panel-shadow)' }}>
-          <img 
-            src="/src/assets/hero.png" 
-            alt="Bujjithalli Study Hero" 
+          <img
+            src="/src/assets/hero.png"
+            alt="learning-loop Study Hero"
             style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
           />
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '10px', color: 'white', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Award size={14} style={{ color: '#f5b041' }} />
-            <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'var(--font-cute)' }}>You can do it, Bujjithalli! 🏆</span>
+            <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'var(--font-cute)' }}>You can do it, learning-loop! 🏆</span>
           </div>
         </div>
 
@@ -163,7 +163,7 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
           {children}
         </div>
       </div>
-      
+
       {/* Add responsive desktop panel styling */}
       <style>{`
         .desktop-side-panel {

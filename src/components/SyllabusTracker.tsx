@@ -12,7 +12,7 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
   const [activeSubjectTab, setActiveSubjectTab] = useState<string>('quantitative-aptitude');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeSubcategory, setActiveSubcategory] = useState<string>('All');
-  
+
   // Modal Editor state
   const [selectedTopic, setSelectedTopic] = useState<{ subjectId: string; topic: SyllabusTopic } | null>(null);
   const [editNotes, setEditNotes] = useState<string>('');
@@ -26,7 +26,7 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
   const handleToggleComplete = (subjectId: string, topic: SyllabusTopic, e: React.MouseEvent) => {
     e.stopPropagation(); // Avoid opening editor modal
     const nextStatus: SyllabusTopic['status'] = topic.status === 'completed' ? 'pending' : 'completed';
-    
+
     if (nextStatus === 'completed') {
       audioSynthesizer.playChime('complete');
     } else {
@@ -49,7 +49,7 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
   // Save modal edits
   const handleSaveEdits = () => {
     if (!selectedTopic) return;
-    
+
     audioSynthesizer.playChime('complete');
     onUpdateTopic(selectedTopic.subjectId, selectedTopic.topic.id, {
       notes: editNotes,
@@ -64,10 +64,10 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
   // Filter topics based on search query and subcategory
   const filteredTopics = currentSubject
     ? currentSubject.topics.filter(topic => {
-        const matchesSearch = topic.name.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesSubcategory = activeSubcategory === 'All' || topic.category === activeSubcategory;
-        return matchesSearch && matchesSubcategory;
-      })
+      const matchesSearch = topic.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSubcategory = activeSubcategory === 'All' || topic.category === activeSubcategory;
+      return matchesSearch && matchesSubcategory;
+    })
     : [];
 
   // Count progress for selected subcategory
@@ -102,9 +102,9 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
               boxShadow: activeSubjectTab === subj.id ? '0 4px 10px rgba(0,0,0,0.05)' : 'none'
             }}
           >
-            {subj.name === 'Quantitative Aptitude' ? '📐 Quant' : 
-             subj.name === 'General Intelligence & Reasoning' ? '🧠 Reason' : 
-             subj.name === 'English Language & Comprehension' ? '✍️ English' : '🌍 GK'}
+            {subj.name === 'Quantitative Aptitude' ? '📐 Quant' :
+              subj.name === 'General Intelligence & Reasoning' ? '🧠 Reason' :
+                subj.name === 'English Language & Comprehension' ? '✍️ English' : '🌍 GK'}
           </button>
         ))}
       </div>
@@ -197,7 +197,7 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '420px', overflowY: 'auto', paddingRight: '2px' }}>
         {filteredTopics.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '30px 10px', color: 'var(--text-secondary)' }}>
-            <p style={{ fontSize: '12px' }}>No matching topics found, Bujjithalli! 🌸</p>
+            <p style={{ fontSize: '12px' }}>No matching topics found !</p>
           </div>
         ) : (
           filteredTopics.map(topic => {
@@ -263,13 +263,13 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
                   }}>
                     {topic.name}
                   </p>
-                  
+
                   {/* Small Info Tags */}
                   <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
                     {topic.revisionStatus !== 'not_revised' && (
                       <span className="badge" style={{ backgroundColor: 'var(--accent-light)', color: 'var(--text-primary)', fontSize: '8px', padding: '2px 6px' }}>
                         {topic.revisionStatus === 'revised_1' ? '🔄 1st Rev' :
-                         topic.revisionStatus === 'revised_2' ? '🔄 2nd Rev' : '👑 Mastered'}
+                          topic.revisionStatus === 'revised_2' ? '🔄 2nd Rev' : '👑 Mastered'}
                       </span>
                     )}
                     {topic.targetDate && (
