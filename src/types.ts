@@ -83,4 +83,29 @@ export interface FlashcardSet {
   createdAt: number;
 }
 
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  selectedAnswer?: string;
+  isCorrect?: boolean;
+}
+
+export interface QuizAttempt {
+  id: string;
+  setId: string;
+  setTitle: string;
+  score: number;
+  totalQuestions: number;
+  timeSpent: number; // in seconds
+  averageSpeed: number; // seconds per question
+  accuracy: number; // percentage
+  efficiencyScore: number; // calculated index (0-100)
+  date: string; // YYYY-MM-DD
+  timestamp: number;
+  strategy?: 'mcq' | 'tf' | 'type_in' | 'matching';
+}
+
+
 

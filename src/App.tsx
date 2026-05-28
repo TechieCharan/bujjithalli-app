@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Home, BookOpen, Clock, CheckSquare, Heart, Settings as SettingsIcon, Layers } from 'lucide-react';
+import { Home, BookOpen, Clock, CheckSquare, Heart, Settings as SettingsIcon } from 'lucide-react';
 
-import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, BucketItem, UserProfile, DailyLog, MockTest, Flashcard, FlashcardSet } from './types';
+import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, BucketItem, UserProfile, DailyLog, MockTest, FlashcardSet, QuizAttempt } from './types';
 import { DEFAULT_SYLLABUS } from './data/syllabus';
 import { stateStorage } from './db/storage';
 import { audioSynthesizer } from './components/AudioSynthesizer';
@@ -13,7 +13,6 @@ import SyllabusTracker from './components/SyllabusTracker';
 import PomodoroTimer from './components/PomodoroTimer';
 import TodoList from './components/TodoList';
 import BucketList from './components/BucketList';
-import FlashcardsView from './components/FlashcardsView';
 import Settings from './components/Settings';
 
 // Default mock values for empty state seeding
@@ -127,6 +126,10 @@ export const App: React.FC = () => {
     stateStorage.get<FlashcardSet[]>('flashcard_sets', INITIAL_FLASHCARDS)
   );
 
+  const [quizAttempts, setQuizAttempts] = useState<QuizAttempt[]>(() =>
+    stateStorage.get<QuizAttempt[]>('quiz_attempts', [])
+  );
+
   const [streak, setStreak] = useState<number>(() => 
     stateStorage.get<number>('streak', 0)
   );
@@ -163,6 +166,7 @@ export const App: React.FC = () => {
   useEffect(() => { stateStorage.set('todos', todos); }, [todos]);
   useEffect(() => { stateStorage.set('bucket', bucketList); }, [bucketList]);
   useEffect(() => { stateStorage.set('flashcard_sets', flashcardSets); }, [flashcardSets]);
+  useEffect(() => { stateStorage.set('quiz_attempts', quizAttempts); }, [quizAttempts]);
   useEffect(() => { stateStorage.set('streak', streak); }, [streak]);
   useEffect(() => { stateStorage.set('daily_logs', dailyLogs); }, [dailyLogs]);
   useEffect(() => { stateStorage.set('mock_tests', mockTests); }, [mockTests]);
@@ -283,20 +287,7 @@ export const App: React.FC = () => {
     setMockTests(prev => [newMock, ...prev]);
   };
 
-  // Flashcards Handlers
-  const handleAddFlashcardSet = (newSet: FlashcardSet) => {
-    setFlashcardSets(prev => [newSet, ...prev]);
-  };
 
-  const handleDeleteFlashcardSet = (setId: string) => {
-    setFlashcardSets(prev => prev.filter(s => s.id !== setId));
-  };
-
-  const handleUpdateSetCards = (setId: string, updatedCards: Flashcard[]) => {
-    setFlashcardSets(prev => prev.map(set => 
-      set.id === setId ? { ...set, cards: updatedCards } : set
-    ));
-  };
 
   // Backup Sync Imports/Exports
   const getFullBackupString = () => {
@@ -305,6 +296,7 @@ export const App: React.FC = () => {
       todos,
       bucketList,
       flashcardSets,
+      quizAttempts,
       streak,
       profile,
       theme,
@@ -321,6 +313,7 @@ export const App: React.FC = () => {
       if (data.todos) setTodos(data.todos);
       if (data.bucketList) setBucketList(data.bucketList);
       if (data.flashcardSets) setFlashcardSets(data.flashcardSets);
+      if (data.quizAttempts) setQuizAttempts(data.quizAttempts);
       if (data.streak !== undefined) setStreak(data.streak);
       if (data.profile) setProfile(data.profile);
       if (data.theme) setTheme(data.theme);
@@ -342,6 +335,7 @@ export const App: React.FC = () => {
     stateStorage.remove('todos');
     stateStorage.remove('bucket');
     stateStorage.remove('flashcard_sets');
+    stateStorage.remove('quiz_attempts');
     stateStorage.remove('streak');
     stateStorage.remove('profile');
     stateStorage.remove('theme');
@@ -420,15 +414,6 @@ export const App: React.FC = () => {
             exportDataString={getFullBackupString()}
           />
         );
-      case 'flashcards':
-        return (
-          <FlashcardsView
-            flashcardSets={flashcardSets}
-            onAddSet={handleAddFlashcardSet}
-            onDeleteSet={handleDeleteFlashcardSet}
-            onUpdateSetCards={handleUpdateSetCards}
-          />
-        );
     }
   };
 
@@ -473,13 +458,7 @@ export const App: React.FC = () => {
           <span className="tab-label">To-Do</span>
         </button>
 
-        <button
-          onClick={() => handleTabChange('flashcards')}
-          className={`tab-item ${activeTab === 'flashcards' ? 'active' : ''}`}
-        >
-          <Layers className="tab-item-icon" />
-          <span className="tab-label">Cards</span>
-        </button>
+
 
         <button
           onClick={() => handleTabChange('bucket')}
