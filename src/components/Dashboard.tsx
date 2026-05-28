@@ -26,7 +26,7 @@ interface DashboardProps {
   ) => void;
   onDeleteMockTest: (id: string) => void;
   onUpdateMockTest: (id: string, updates: Partial<MockTest>) => void;
-  onNavigate: (tab: 'syllabus' | 'timer' | 'todo' | 'bucket') => void;
+  onNavigate: (tab: 'syllabus' | 'timer' | 'todo') => void;
 }
 
 const BUJJI_QUOTES = [
@@ -228,6 +228,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const accuracyTrend = useMemo(() =>
     mockTests.filter(m => m.accuracy !== undefined).sort((a, b) => a.date.localeCompare(b.date)).slice(-5),
     [mockTests]);
+
+  const averageMockScore = mockTests.length > 0 ? Math.round(mockTests.reduce((sum, test) => sum + test.score, 0) / mockTests.length) : 0;
+  const averageAccuracy = mockTests.filter(m => m.accuracy !== undefined).length > 0
+    ? Number((mockTests.filter(m => m.accuracy !== undefined).reduce((sum, test) => sum + (test.accuracy ?? 0), 0) / mockTests.filter(m => m.accuracy !== undefined).length).toFixed(1))
+    : null;
+
+  const performanceSummary = latestMock ?
+    scoreDelta === null ? 'Keep building a steady mock test record.' :
+    scoreDelta >= 0 ? 'Your latest mock shows strong momentum — keep that focus.' :
+    'Review the weak areas and aim for a steady rebound in the next test.'
+    : 'Log your first mock test and track strong progress over time.';
 
   const subjectOptions = useMemo(() => {
     const s = new Set<string>();
@@ -455,6 +466,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div style={statCardStyle}><span style={labelStyle}>TOTAL TESTS</span><span style={valueStyle}>🏆 {mockTests.length}</span></div>
               <div style={statCardStyle}><span style={labelStyle}>HIGHEST</span><span style={{ ...valueStyle, color: '#22c55e' }}>👑 {highestMockScore}/200</span></div>
               <div style={statCardStyle}><span style={labelStyle}>TREND</span><span style={{ ...valueStyle, color: scoreDelta === null ? 'var(--text-secondary)' : scoreDelta >= 0 ? '#22c55e' : '#ef4444' }}>{scoreDelta === null ? '—' : scoreDelta >= 0 ? `▲+${scoreDelta}` : `▼${scoreDelta}`}</span></div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <div style={{ background: 'var(--bg-primary)', border: '1px solid var(--glass-border)', borderRadius: '14px', padding: '12px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginBottom: '8px' }}>Mock Test Analysis</span>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '1 1 160px', minWidth: 120 }}>
+                    <span style={{ display: 'block', fontSize: '9px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Average Score</span>
+                    <span style={{ fontSize: '15px', fontWeight: 800, color: '#22c55e' }}>{averageMockScore}/200</span>
+                  </div>
+                  <div style={{ flex: '1 1 160px', minWidth: 120 }}>
+                    <span style={{ display: 'block', fontSize: '9px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Average Accuracy</span>
+                    <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--accent)' }}>{averageAccuracy !== null ? `${averageAccuracy}%` : '–'}</span>
+                  </div>
+                  <div style={{ flex: '1 1 200px', minWidth: 160 }}>
+                    <span style={{ display: 'block', fontSize: '9px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Insight</span>
+                    <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-primary)', lineHeight: '1.4' }}>{performanceSummary}</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Weak areas summary */}
@@ -841,7 +872,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'var(--accent-light)', border: '1px dashed var(--accent)' }}>
         <Calendar size={18} style={{ color: 'var(--accent)', flexShrink: 0 }} />
         <span style={{ fontSize: '11px', color: 'var(--text-primary)', fontWeight: 500, lineHeight: '1.4' }}>
-          <strong>Study Target</strong>: Master 1 topic today, revise for 10 minutes on your Pomodoro breaks, and write down 1 big dream! 💕
+          <strong>Study Target</strong>: Master 1 topic today, revise for 10 minutes on your Pomodoro breaks, and keep your focus sharp.
         </span>
       </div>
     </div>

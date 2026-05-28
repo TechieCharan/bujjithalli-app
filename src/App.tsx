@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Home, BookOpen, Clock, CheckSquare, Heart, Settings as SettingsIcon } from 'lucide-react';
+import { Home, BookOpen, Clock, CheckSquare, Settings as SettingsIcon } from 'lucide-react';
 
-import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, BucketItem, UserProfile, DailyLog, MockTest, FlashcardSet, QuizAttempt } from './types';
+import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, UserProfile, DailyLog, MockTest, FlashcardSet, QuizAttempt } from './types';
 import { DEFAULT_SYLLABUS } from './data/syllabus';
 import { stateStorage } from './db/storage';
 import { audioSynthesizer } from './components/AudioSynthesizer';
@@ -12,7 +12,6 @@ import Dashboard from './components/Dashboard';
 import SyllabusTracker from './components/SyllabusTracker';
 import PomodoroTimer from './components/PomodoroTimer';
 import TodoList from './components/TodoList';
-import BucketList from './components/BucketList';
 import Settings from './components/Settings';
 
 // Default mock values for empty state seeding
@@ -21,12 +20,6 @@ const INITIAL_TODOS: TodoItem[] = [
   { id: 'todo-2', text: 'Revise static GK books & authors list 📚', completed: false, category: 'study', priority: 'medium' },
   { id: 'todo-3', text: 'Drink 8 glasses of water today 💧', completed: false, category: 'health', priority: 'medium' },
   { id: 'todo-4', text: 'Organize study desk & clear drafts ✨', completed: true, category: 'personal', priority: 'low' }
-];
-
-const INITIAL_BUCKET: BucketItem[] = [
-  { id: 'bucket-1', title: 'Achieve Top Rank & Get Dream Posting 👑', description: 'Your dream job is waiting. Work hard now, shine later!', category: 'Career Goals 💼', completed: false, targetDate: '2026-10-31' },
-  { id: 'bucket-2', title: 'Stroll under cherry blossom gardens in Kyoto', description: 'Float under pink petals with the breeze!', category: 'Travel ✈️', completed: false },
-  { id: 'bucket-3', title: 'Build a cozy private plant terrace library 🌿', description: 'Coffee, books, green vines, and beautiful lights.', category: 'Personal Growth 🌱', completed: false }
 ];
 
 const INITIAL_FLASHCARDS: FlashcardSet[] = [
@@ -118,10 +111,6 @@ export const App: React.FC = () => {
     stateStorage.get<TodoItem[]>('todos', INITIAL_TODOS)
   );
 
-  const [bucketList, setBucketList] = useState<BucketItem[]>(() =>
-    stateStorage.get<BucketItem[]>('bucket', INITIAL_BUCKET)
-  );
-
   const [flashcardSets, setFlashcardSets] = useState<FlashcardSet[]>(() =>
     stateStorage.get<FlashcardSet[]>('flashcard_sets', INITIAL_FLASHCARDS)
   );
@@ -164,7 +153,6 @@ export const App: React.FC = () => {
   // Sync state changes with LocalStorage
   useEffect(() => { stateStorage.set('syllabus', syllabus); }, [syllabus]);
   useEffect(() => { stateStorage.set('todos', todos); }, [todos]);
-  useEffect(() => { stateStorage.set('bucket', bucketList); }, [bucketList]);
   useEffect(() => { stateStorage.set('flashcard_sets', flashcardSets); }, [flashcardSets]);
   useEffect(() => { stateStorage.set('quiz_attempts', quizAttempts); }, [quizAttempts]);
   useEffect(() => { stateStorage.set('streak', streak); }, [streak]);
@@ -234,28 +222,6 @@ export const App: React.FC = () => {
     setTodos(prev => prev.filter(t => t.id !== id));
   };
 
-  // Bucket List Handlers
-  const handleAddBucketItem = (title: string, description: string, category: string, imageKey?: string, targetDate?: string) => {
-    const newItem: BucketItem = {
-      id: `bucket_${Date.now()}`,
-      title,
-      description,
-      category,
-      imageUrl: imageKey,
-      completed: false,
-      targetDate
-    };
-    setBucketList(prev => [newItem, ...prev]);
-  };
-
-  const handleToggleBucketItem = (id: string) => {
-    setBucketList(prev => prev.map(item => item.id === id ? { ...item, completed: !item.completed } : item));
-  };
-
-  const handleDeleteBucketItem = (id: string) => {
-    setBucketList(prev => prev.filter(item => item.id !== id));
-  };
-
   // Streak & Timer Logs
   const handleIncrementStreak = () => {
     setStreak(prev => prev + 1);
@@ -314,7 +280,6 @@ export const App: React.FC = () => {
     return JSON.stringify({
       syllabus,
       todos,
-      bucketList,
       flashcardSets,
       quizAttempts,
       streak,
@@ -331,7 +296,6 @@ export const App: React.FC = () => {
       const data = JSON.parse(jsonData);
       if (data.syllabus) setSyllabus(data.syllabus);
       if (data.todos) setTodos(data.todos);
-      if (data.bucketList) setBucketList(data.bucketList);
       if (data.flashcardSets) setFlashcardSets(data.flashcardSets);
       if (data.quizAttempts) setQuizAttempts(data.quizAttempts);
       if (data.streak !== undefined) setStreak(data.streak);
@@ -353,7 +317,6 @@ export const App: React.FC = () => {
   const handleResetData = () => {
     stateStorage.remove('syllabus');
     stateStorage.remove('todos');
-    stateStorage.remove('bucket');
     stateStorage.remove('flashcard_sets');
     stateStorage.remove('quiz_attempts');
     stateStorage.remove('streak');
@@ -384,7 +347,6 @@ export const App: React.FC = () => {
               if (tab === 'syllabus') setActiveTab('syllabus');
               if (tab === 'timer') setActiveTab('timer');
               if (tab === 'todo') setActiveTab('todo');
-              if (tab === 'bucket') setActiveTab('bucket');
             }}
           />
         );
@@ -411,15 +373,6 @@ export const App: React.FC = () => {
             onAddTodo={handleAddTodo}
             onToggleTodo={handleToggleTodo}
             onDeleteTodo={handleDeleteTodo}
-          />
-        );
-      case 'bucket':
-        return (
-          <BucketList
-            bucketList={bucketList}
-            onAddBucketItem={handleAddBucketItem}
-            onToggleBucketItem={handleToggleBucketItem}
-            onDeleteBucketItem={handleDeleteBucketItem}
           />
         );
       case 'settings':
@@ -481,14 +434,6 @@ export const App: React.FC = () => {
         </button>
 
 
-
-        <button
-          onClick={() => handleTabChange('bucket')}
-          className={`tab-item ${activeTab === 'bucket' ? 'active' : ''}`}
-        >
-          <Heart className="tab-item-icon" />
-          <span className="tab-label">Dreams</span>
-        </button>
 
         <button
           onClick={() => handleTabChange('settings')}

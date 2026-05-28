@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { User, Palette, Moon, Sun, Download, Upload, Heart, ShieldAlert, Volume2, VolumeX } from 'lucide-react';
 import type { AppTheme, UserProfile } from '../types';
 import { audioSynthesizer } from './AudioSynthesizer';
-import { photoStorage } from '../db/storage';
 
 interface SettingsProps {
   profile: UserProfile;
@@ -93,11 +92,10 @@ export const Settings: React.FC<SettingsProps> = ({
     reader.readAsText(file);
   };
 
-  const handleFullReset = async () => {
+  const handleFullReset = () => {
     audioSynthesizer.playChime('click');
-    await photoStorage.clear();
     onResetAllData();
-    alert("All offline databases have been reset to factory defaults.");
+    alert("All saved progress has been reset to factory defaults.");
     window.location.reload();
   };
 
@@ -271,7 +269,7 @@ export const Settings: React.FC<SettingsProps> = ({
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', animation: 'fadeIn 0.2s' }}>
             <span style={{ fontSize: '10px', color: '#dc2626', fontWeight: 600 }}>
-              Are you absolutely sure? This will delete all syllabus notes, todos, study streaks, and bucket list photos!
+              Are you absolutely sure? This will delete all syllabus notes, todos, study streaks, and saved progress.
             </span>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button

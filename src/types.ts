@@ -26,16 +26,6 @@ export interface TodoItem {
   dueDate?: string;
 }
 
-export interface BucketItem {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  imageUrl?: string; // base64 encoded image data URL stored in IndexedDB
-  completed: boolean;
-  targetDate?: string;
-}
-
 export interface StudySession {
   id: string;
   duration: number; // minutes focused
@@ -51,7 +41,7 @@ export interface UserProfile {
 }
 
 export type AppTheme = 'cozy-room' | 'night-sky' | 'nature-rain' | 'study-desk' | 'ocean-breeze';
-export type AppTab = 'dashboard' | 'syllabus' | 'timer' | 'todo' | 'bucket' | 'settings' | 'flashcards';
+export type AppTab = 'dashboard' | 'syllabus' | 'timer' | 'todo' | 'settings' | 'flashcards';
 
 export interface DailyLog {
   date: string; // YYYY-MM-DD
