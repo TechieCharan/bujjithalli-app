@@ -10,6 +10,7 @@ class AmbientSynthesizer {
   private lfoGain: GainNode | null = null;
   private isPlaying = false;
   private currentSoundType: 'rain' | 'waves' | 'wind' | 'off' = 'off';
+  private isMutedSetting = localStorage.getItem('bujjithalli_sound_muted') === 'true';
 
   private initContext() {
     if (!this.ctx) {
@@ -35,6 +36,33 @@ class AmbientSynthesizer {
     return buffer;
   }
 
+  public setMuted(muted: boolean) {
+    this.isMutedSetting = muted;
+    localStorage.setItem('bujjithalli_sound_muted', String(muted));
+    
+    // If currently playing white noise soundscape, modulate its gainNode volume to 0 immediately
+    if (this.gainNode) {
+      const now = this.ctx?.currentTime || 0;
+      if (muted) {
+        this.gainNode.gain.setValueAtTime(0, now);
+      } else {
+        // Restore sound volume depending on current type
+        const type = this.currentSoundType;
+        if (type === 'rain') {
+          this.gainNode.gain.setValueAtTime(0.25, now);
+        } else if (type === 'waves') {
+          this.gainNode.gain.setValueAtTime(0.18, now);
+        } else if (type === 'wind') {
+          this.gainNode.gain.setValueAtTime(0.4, now);
+        }
+      }
+    }
+  }
+
+  public getMuted(): boolean {
+    return this.isMutedSetting;
+  }
+
   public play(type: 'rain' | 'waves' | 'wind') {
     this.stop();
     this.initContext();
@@ -56,7 +84,7 @@ class AmbientSynthesizer {
       // Steady rain: Lowpassed noise around 800Hz
       this.filterNode.type = 'lowpass';
       this.filterNode.frequency.value = 750;
-      this.gainNode.gain.value = 0.25;
+      this.gainNode.gain.value = this.isMutedSetting ? 0 : 0.25;
 
       this.noiseNode.connect(this.filterNode);
       this.filterNode.connect(this.gainNode);
@@ -72,9 +100,9 @@ class AmbientSynthesizer {
       this.lfoNode.frequency.value = 0.08; // One swell every ~12 seconds
 
       this.lfoGain = this.ctx.createGain();
-      this.lfoGain.gain.value = 0.15; // Volume variation depth
+      this.lfoGain.gain.value = this.isMutedSetting ? 0 : 0.15; // Volume variation depth
 
-      this.gainNode.gain.value = 0.18; // Base volume
+      this.gainNode.gain.value = this.isMutedSetting ? 0 : 0.18; // Base volume
 
       // Connect LFO to modulate main Gain Node gain value
       this.lfoNode.connect(this.lfoGain);
@@ -97,9 +125,9 @@ class AmbientSynthesizer {
       this.lfoNode.frequency.value = 0.15; // Slow variation
 
       this.lfoGain = this.ctx.createGain();
-      this.lfoGain.gain.value = 250; // Sweeping range (Hz)
+      this.lfoGain.gain.value = this.isMutedSetting ? 0 : 250; // Sweeping range (Hz)
 
-      this.gainNode.gain.value = 0.4;
+      this.gainNode.gain.value = this.isMutedSetting ? 0 : 0.4;
 
       // Connect LFO to modulate Filter Cutoff Frequency
       this.lfoNode.connect(this.lfoGain);
@@ -164,6 +192,7 @@ class AmbientSynthesizer {
 
   // Play a simple cute bubble/chime sound using synthesized frequencies
   public playChime(style: 'complete' | 'break' | 'click' = 'click') {
+    if (this.isMutedSetting) return; // Muted!
     this.initContext();
     if (!this.ctx) return;
 

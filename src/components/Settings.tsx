@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Palette, Moon, Sun, Download, Upload, Heart, ShieldAlert } from 'lucide-react';
+import { User, Palette, Moon, Sun, Download, Upload, Heart, ShieldAlert, Volume2, VolumeX } from 'lucide-react';
 import type { AppTheme, UserProfile } from '../types';
 import { audioSynthesizer } from './AudioSynthesizer';
 import { photoStorage } from '../db/storage';
@@ -29,6 +29,16 @@ export const Settings: React.FC<SettingsProps> = ({
 }) => {
   const [nameInput, setNameInput] = useState<string>(profile.name);
   const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(() => audioSynthesizer.getMuted());
+
+  const handleToggleMute = () => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    audioSynthesizer.setMuted(newMuted);
+    if (!newMuted) {
+      audioSynthesizer.playChime('click');
+    }
+  };
 
   const handleSaveName = (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,6 +192,37 @@ export const Settings: React.FC<SettingsProps> = ({
           >
             {isDarkMode ? <Moon size={12} /> : <Sun size={12} />}
             {isDarkMode ? 'Night Desk' : 'Morning Desk'}
+          </button>
+        </div>
+      </div>
+
+      {/* Sound Settings Card */}
+      <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Volume2 size={16} style={{ color: 'var(--accent)' }} /> 🔊 Sound Preferences
+        </h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)' }}>
+              Application Audio
+            </span>
+            <span style={{ display: 'block', fontSize: '9px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              Mute study soundscapes and interface chimes
+            </span>
+          </div>
+
+          <button
+            onClick={handleToggleMute}
+            className="btn-cute btn-cute-secondary"
+            style={{
+              padding: '8px 12px', borderRadius: '12px', fontSize: '11px', display: 'flex', gap: '6px', alignItems: 'center',
+              backgroundColor: isMuted ? 'var(--accent-light)' : 'transparent',
+              borderColor: isMuted ? 'var(--accent)' : 'var(--glass-border)',
+              color: isMuted ? 'var(--accent)' : 'var(--text-primary)'
+            }}
+          >
+            {isMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
+            {isMuted ? 'Muted' : 'Unmuted'}
           </button>
         </div>
       </div>

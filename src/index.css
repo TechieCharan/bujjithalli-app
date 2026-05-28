@@ -246,6 +246,24 @@ button, input, select, textarea {
   transition: var(--transition-smooth);
 }
 
+/* Status Bar Background Cover to block scrolled text under native iOS icons */
+.phone-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 50px);
+  min-height: 50px;
+  background-color: var(--bg-primary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 999;
+  border-bottom: 1.5px solid var(--glass-border);
+  pointer-events: none;
+  transition: background-color var(--transition-smooth);
+}
+
 /* --- THEMED ANIMATION OVERLAYS --- */
 .aesthetic-animation-overlay {
   position: absolute;

@@ -37,6 +37,16 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
   
   // Audio Synthesizer State
   const [activeSound, setActiveSound] = useState<'rain' | 'waves' | 'wind' | 'off'>('off');
+  const [isMutedGlobal, setIsMutedGlobal] = useState<boolean>(() => audioSynthesizer.getMuted());
+
+  const toggleMuteGlobal = () => {
+    const newMuted = !isMutedGlobal;
+    setIsMutedGlobal(newMuted);
+    audioSynthesizer.setMuted(newMuted);
+    if (!newMuted) {
+      audioSynthesizer.playChime('click');
+    }
+  };
   
   // Custom Settings Open
   const [showConfig, setShowConfig] = useState<boolean>(false);
@@ -327,9 +337,28 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
 
       {/* Web Audio Ambient Player Panel */}
       <div className="glass-panel" style={{ padding: '16px' }}>
-        <h3 style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Volume2 size={16} style={{ color: 'var(--accent)' }} /> 🎧 Study Soundscapes (Offline Synth)
-        </h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <h3 style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {isMutedGlobal ? <VolumeX size={16} style={{ color: '#ef4444' }} /> : <Volume2 size={16} style={{ color: 'var(--accent)' }} />} 🎧 Study Soundscapes (Offline Synth)
+          </h3>
+          <button
+            onClick={toggleMuteGlobal}
+            className="btn-circle"
+            title={isMutedGlobal ? "Unmute All" : "Mute All"}
+            style={{ 
+              width: '28px', 
+              height: '28px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              backgroundColor: isMutedGlobal ? 'rgba(239, 68, 68, 0.15)' : 'var(--glass-bg)',
+              borderColor: isMutedGlobal ? '#ef4444' : 'var(--glass-border)',
+              color: isMutedGlobal ? '#ef4444' : 'var(--text-primary)'
+            }}
+          >
+            {isMutedGlobal ? <VolumeX size={12} /> : <Volume2 size={12} />}
+          </button>
+        </div>
 
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
