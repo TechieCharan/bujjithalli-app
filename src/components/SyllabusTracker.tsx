@@ -349,7 +349,7 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
                     <option value="not_revised">❌ Not Revised</option>
                     <option value="revised_1">🔄 1st Revision</option>
                     <option value="revised_2">🔄 2nd Revision</option>
-                    <option value="mastered">👑 Mastered (CGL King)</option>
+                    <option value="mastered">👑 Mastered</option>
                   </select>
                 </div>
               </div>

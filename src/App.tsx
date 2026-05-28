@@ -24,7 +24,7 @@ const INITIAL_TODOS: TodoItem[] = [
 ];
 
 const INITIAL_BUCKET: BucketItem[] = [
-  { id: 'bucket-1', title: 'Achieve SSC CGL Top Rank & Get Posted 👑', description: 'Your dream job is waiting. Work hard now, shine later!', category: 'Career Goals 💼', completed: false, targetDate: '2026-10-31' },
+  { id: 'bucket-1', title: 'Achieve Top Rank & Get Dream Posting 👑', description: 'Your dream job is waiting. Work hard now, shine later!', category: 'Career Goals 💼', completed: false, targetDate: '2026-10-31' },
   { id: 'bucket-2', title: 'Stroll under cherry blossom gardens in Kyoto 🌸', description: 'Float under pink petals with the breeze!', category: 'Travel ✈️', completed: false },
   { id: 'bucket-3', title: 'Build a cozy private plant terrace library 🌿', description: 'Coffee, books, green vines, and beautiful lights.', category: 'Personal Growth 🌱', completed: false }
 ];
@@ -32,7 +32,7 @@ const INITIAL_BUCKET: BucketItem[] = [
 const INITIAL_FLASHCARDS: FlashcardSet[] = [
   {
     id: 'set-1',
-    title: 'SSC CGL Polity & Constitution 🏛️',
+    title: 'Polity & Constitution 🏛️',
     description: 'Important articles, amendments, and features of the Indian Constitution.',
     category: 'GK / Polity 🌸',
     createdAt: Date.now(),
@@ -277,16 +277,36 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleAddMockTest = (score: number, notes?: string) => {
+  const handleAddMockTest = (
+    score: number,
+    accuracy?: number,
+    timeTaken?: number,
+    weakAreas?: string[],
+    mistakes?: string,
+    notes?: string,
+    subject?: string
+  ) => {
     const newMock: MockTest = {
       id: `mock_${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
       score,
-      notes
+      accuracy,
+      timeTaken,
+      weakAreas,
+      mistakes,
+      notes,
+      subject
     };
     setMockTests(prev => [newMock, ...prev]);
   };
 
+  const handleDeleteMockTest = (id: string) => {
+    setMockTests(prev => prev.filter(m => m.id !== id));
+  };
+
+  const handleUpdateMockTest = (id: string, updates: Partial<MockTest>) => {
+    setMockTests(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
+  };
 
 
   // Backup Sync Imports/Exports
@@ -358,6 +378,8 @@ export const App: React.FC = () => {
             mockTests={mockTests}
             onLogDailyStudy={handleLogDailyStudy}
             onAddMockTest={handleAddMockTest}
+            onDeleteMockTest={handleDeleteMockTest}
+            onUpdateMockTest={handleUpdateMockTest}
             onNavigate={(tab) => {
               if (tab === 'syllabus') setActiveTab('syllabus');
               if (tab === 'timer') setActiveTab('timer');

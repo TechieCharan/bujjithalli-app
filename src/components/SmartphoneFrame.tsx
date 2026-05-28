@@ -9,7 +9,7 @@ interface SmartphoneFrameProps {
 
 export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dailyLogs = [] }) => {
 
-  // Compute remaining days to SSC CGL Tier 1 Exam (August 25, 2026)
+  // Compute remaining days to Target Exam (August 25, 2026)
   const examDate = new Date('2026-08-25T00:00:00');
   const today = new Date();
   examDate.setHours(0,0,0,0);
@@ -42,11 +42,11 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
             <h2 style={{ fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', fontSize: '18px', fontWeight: 700 }}>
               Bujjithalli Productivity
             </h2>
-            <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>SSC CGL Focus Assistant</span>
+            <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Study Focus Assistant</span>
           </div>
         </div>
 
-        {/* Calendar Card displaying SSC CGL countdown */}
+        {/* Calendar Card displaying exam countdown */}
         <div className="glass-panel" style={{ padding: '14px', margin: 0, border: '1.5px solid var(--glass-border)', borderRadius: '18px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <span style={{ fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-primary)' }}>
@@ -136,7 +136,7 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
         <div style={{ position: 'relative', borderRadius: '18px', overflow: 'hidden', border: '1.5px solid var(--glass-border)', boxShadow: 'var(--panel-shadow)' }}>
           <img 
             src="/src/assets/hero.png" 
-            alt="Bujjithalli CGL Study Hero" 
+            alt="Bujjithalli Study Hero" 
             style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
           />
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '10px', color: 'white', display: 'flex', alignItems: 'center', gap: '6px' }}>

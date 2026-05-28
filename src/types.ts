@@ -63,7 +63,12 @@ export interface MockTest {
   id: string;
   date: string;
   score: number; // out of 200
-  notes?: string;
+  accuracy?: number; // percentage (0-100)
+  timeTaken?: number; // minutes
+  weakAreas?: string[]; // e.g. ['Quant', 'English']
+  mistakes?: string; // free-text mistake notes
+  notes?: string; // general notes
+  subject?: string; // optional subject label for filtering
 }
 
 export interface Flashcard {
