@@ -44,6 +44,7 @@ export interface UserProfile {
   streak: number;
   lastActiveDate?: string;
   globalExamDate?: string;
+  globalExamName?: string;
 }
 
 export type AppTheme = 'cozy-room' | 'night-sky' | 'nature-rain' | 'study-desk' | 'ocean-breeze';

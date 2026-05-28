@@ -379,6 +379,7 @@ export const App: React.FC = () => {
           <Dashboard
             userName={profile.name}
             globalExamDate={profile.globalExamDate}
+            globalExamName={profile.globalExamName}
             syllabus={syllabus}
             todos={todos}
             streak={streak}
@@ -388,11 +389,9 @@ export const App: React.FC = () => {
             onAddMockTest={handleAddMockTest}
             onDeleteMockTest={handleDeleteMockTest}
             onUpdateMockTest={handleUpdateMockTest}
-            onNavigate={(tab) => {
-              if (tab === 'syllabus') setActiveTab('syllabus');
-              if (tab === 'timer') setActiveTab('timer');
-              if (tab === 'todo') setActiveTab('todo');
-            }}
+            onNavigate={setActiveTab}
+            onUpdateExamDate={(date) => setProfile(p => ({ ...p, globalExamDate: date }))}
+            onUpdateExamName={(name) => setProfile(p => ({ ...p, globalExamName: name }))}
           />
         );
       case 'syllabus':

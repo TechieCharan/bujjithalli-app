@@ -10,6 +10,7 @@ import { audioSynthesizer } from './AudioSynthesizer';
 interface DashboardProps {
   userName: string;
   globalExamDate?: string;
+  globalExamName?: string;
   syllabus: SyllabusSubject[];
   todos: TodoItem[];
   streak: number;
@@ -29,6 +30,7 @@ interface DashboardProps {
   onUpdateMockTest: (id: string, updates: Partial<MockTest>) => void;
   onNavigate: (tab: 'syllabus' | 'timer' | 'todo') => void;
   onUpdateExamDate: (date: string) => void;
+  onUpdateExamName: (name: string) => void;
 }
 
 const BUJJI_QUOTES = [
@@ -154,13 +156,20 @@ const WeakAreaPicker: React.FC<WeakAreaPickerProps> = ({
 };
 
 export const Dashboard: React.FC<DashboardProps> = ({
-  userName, globalExamDate, syllabus, todos, streak,
+  userName, globalExamDate, globalExamName, syllabus, todos, streak,
   dailyLogs = [], mockTests = [],
-  onLogDailyStudy, onAddMockTest, onDeleteMockTest, onUpdateMockTest, onNavigate, onUpdateExamDate
+  onLogDailyStudy, onAddMockTest, onDeleteMockTest, onUpdateMockTest, onNavigate, onUpdateExamDate, onUpdateExamName
 }) => {
   const [quote, setQuote] = useState('');
   const [greeting, setGreeting] = useState('Hello');
   const [activeSubTab, setActiveSubTab] = useState<'study' | 'mock'>('study');
+  
+  const [isEditingExamName, setIsEditingExamName] = useState(false);
+  const [tempExamName, setTempExamName] = useState(globalExamName || '');
+
+  useEffect(() => {
+    setTempExamName(globalExamName || '');
+  }, [globalExamName]);
 
   // Study form
   const [studyHours, setStudyHours] = useState('4');
@@ -201,17 +210,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const radius = 60, circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (syllabusPercent / 100) * circumference;
 
-  let pacingMessage = 'Set a global exam date in Settings to see pacing.';
+  let pacingMessage = 'Set a global exam date to see pacing insights.';
+  let globalDaysLeft: number | null = null;
   if (globalExamDate) {
     const examDate = new Date(`${globalExamDate}T23:59:00`);
     const diffMs = examDate.getTime() - new Date().getTime();
     const daysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    globalDaysLeft = daysLeft;
     const topicsLeft = totalTopics - completedTopics;
     
     if (daysLeft === 0 && diffMs > -86400000) {
       pacingMessage = topicsLeft > 0 ? `Exam is today! You have ${topicsLeft} topics left.` : 'Exam is today! You are all set.';
     } else if (diffMs <= -86400000) {
       pacingMessage = 'Exam date has passed.';
+      globalDaysLeft = -1;
     } else {
       const pace = (topicsLeft / daysLeft).toFixed(1);
       pacingMessage = topicsLeft === 0 
@@ -438,33 +450,70 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* Analytics & Deadlines */}
-      <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      {/* Target Exam Banner */}
+      <div className="glass-panel" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '6px solid var(--accent)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Activity size={16} style={{ color: 'var(--accent)' }} /> Prep Pacing
-          </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)' }}>Exam Date:</span>
-            <input 
-              type="date"
-              value={globalExamDate || ''}
-              onChange={e => onUpdateExamDate(e.target.value)}
-              className="input-cute"
-              style={{ padding: '4px 8px', fontSize: '10px', width: 'auto' }}
-            />
-          </div>
+           <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {isEditingExamName ? (
+                  <input
+                    type="text"
+                    value={tempExamName}
+                    onChange={e => setTempExamName(e.target.value)}
+                    onBlur={() => { onUpdateExamName(tempExamName); setIsEditingExamName(false); }}
+                    onKeyDown={e => { if (e.key === 'Enter') { onUpdateExamName(tempExamName); setIsEditingExamName(false); } }}
+                    autoFocus
+                    placeholder="Enter Exam Name (Optional)"
+                    className="input-cute"
+                    style={{ fontSize: '11px', padding: '2px 6px', width: '180px' }}
+                  />
+                ) : (
+                  <>
+                    <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                      {globalExamName || 'Target Exam'}
+                    </div>
+                    <button onClick={() => setIsEditingExamName(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'var(--text-secondary)' }}>
+                      <Pencil size={10} />
+                    </button>
+                  </>
+                )}
+              </div>
+              {globalDaysLeft !== null && globalDaysLeft >= 0 ? (
+                <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)', marginTop: '2px', lineHeight: 1 }}>
+                  {globalDaysLeft} Days Left
+                </div>
+              ) : globalDaysLeft === -1 ? (
+                <div style={{ fontSize: '18px', fontWeight: 800, color: '#ef4444', fontFamily: 'var(--font-cute)', marginTop: '2px', lineHeight: 1 }}>
+                  Exam Passed
+                </div>
+              ) : (
+                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>
+                  No Date Set
+                </div>
+              )}
+           </div>
+           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+              <input 
+                type="date"
+                value={globalExamDate || ''}
+                onChange={e => onUpdateExamDate(e.target.value)}
+                className="input-cute"
+                style={{ padding: '6px 10px', fontSize: '12px', width: 'auto', fontWeight: 700 }}
+              />
+           </div>
         </div>
-        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, marginTop: '4px' }}>
           {pacingMessage}
         </p>
+      </div>
 
-        {upcomingDeadlines.length > 0 && (
-          <div style={{ marginTop: '10px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
-              <Clock size={12} /> Upcoming Deadlines (Next 3 Days)
-            </span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      {/* Upcoming Deadlines */}
+      {upcomingDeadlines.length > 0 && (
+        <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+            <Clock size={16} style={{ color: '#f59e0b' }} /> Upcoming Deadlines (Next 3 Days)
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '6px' }}>
               {upcomingDeadlines.map((d, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '8px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -475,9 +524,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </div>
               ))}
             </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Critical Tasks */}
       <div className="glass-panel">
