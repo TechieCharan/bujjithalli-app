@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw, Volume2, VolumeX, Flame, Clock, Settings2 } from 'lucide-react';
 import { audioSynthesizer } from './AudioSynthesizer';
+import { MusicPlayer } from './MusicPlayer';
 import type { AppTheme } from '../types';
 
 interface PomodoroTimerProps {
@@ -378,6 +379,9 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
           )}
         </div>
       </div>
+
+      {/* Cozy Custom Music Uploader & Player */}
+      <MusicPlayer />
 
       {/* Duration Config Modal */}
       {showConfig && (

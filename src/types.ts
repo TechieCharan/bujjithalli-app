@@ -51,7 +51,7 @@ export interface UserProfile {
 }
 
 export type AppTheme = 'cozy-room' | 'night-sky' | 'nature-rain' | 'study-desk' | 'ocean-breeze';
-export type AppTab = 'dashboard' | 'syllabus' | 'timer' | 'todo' | 'bucket' | 'settings';
+export type AppTab = 'dashboard' | 'syllabus' | 'timer' | 'todo' | 'bucket' | 'settings' | 'flashcards';
 
 export interface DailyLog {
   date: string; // YYYY-MM-DD
@@ -65,4 +65,22 @@ export interface MockTest {
   score: number; // out of 200
   notes?: string;
 }
+
+export interface Flashcard {
+  id: string;
+  front: string;
+  back: string;
+  status: 'new' | 'learning' | 'mastered';
+  lastStudied?: number;
+}
+
+export interface FlashcardSet {
+  id: string;
+  title: string;
+  description: string;
+  category?: string;
+  cards: Flashcard[];
+  createdAt: number;
+}
+
 

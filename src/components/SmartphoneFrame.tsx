@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Wifi, Battery, Signal, Calendar as CalendarIcon, Award } from 'lucide-react';
+import React from 'react';
+import { Calendar as CalendarIcon, Award } from 'lucide-react';
 import type { DailyLog } from '../types';
 
 interface SmartphoneFrameProps {
@@ -8,21 +8,6 @@ interface SmartphoneFrameProps {
 }
 
 export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dailyLogs = [] }) => {
-  const [time, setTime] = useState<string>('09:41');
-
-  useEffect(() => {
-    const updateClock = () => {
-      const now = new Date();
-      let hours = now.getHours();
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      setTime(`${hours}:${minutes} ${ampm}`);
-    };
-    updateClock();
-    const interval = setInterval(updateClock, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Compute remaining days to SSC CGL Tier 1 Exam (August 25, 2026)
   const examDate = new Date('2026-08-25T00:00:00');
@@ -172,15 +157,6 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
 
       {/* Smartphone Simulator */}
       <div className="phone-simulator-frame">
-        {/* Virtual Top Bar / Status Bar */}
-        <div className="app-status-bar">
-          <span>{time}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Signal size={12} />
-            <Wifi size={12} />
-            <Battery size={14} style={{ transform: 'rotate(90deg)', marginLeft: '2px' }} />
-          </div>
-        </div>
 
         {/* Embedded Screen App */}
         <div className="phone-screen">

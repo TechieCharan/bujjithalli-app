@@ -1,8 +1,9 @@
 // Offline-first storage adapter for Bujjithalli Productivity App
 
 const DB_NAME = 'BujjithalliDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const PHOTO_STORE = 'bucket_photos';
+const MUSIC_STORE = 'music_tracks';
 
 // Initialize IndexedDB
 const initDB = (): Promise<IDBDatabase> => {
@@ -16,6 +17,9 @@ const initDB = (): Promise<IDBDatabase> => {
       const db = request.result;
       if (!db.objectStoreNames.contains(PHOTO_STORE)) {
         db.createObjectStore(PHOTO_STORE);
+      }
+      if (!db.objectStoreNames.contains(MUSIC_STORE)) {
+        db.createObjectStore(MUSIC_STORE);
       }
     };
   });
@@ -113,3 +117,101 @@ export const stateStorage = {
     localStorage.removeItem(`bujjithalli_${key}`);
   }
 };
+
+// IndexedDB Operations for Custom Music
+export const musicStorage = {
+  async save(key: string, audioBlob: Blob, name: string): Promise<void> {
+    try {
+      const db = await initDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(MUSIC_STORE, 'readwrite');
+        const store = transaction.objectStore(MUSIC_STORE);
+        const request = store.put({ blob: audioBlob, name }, key);
+
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.error('Failed to save music to IndexedDB:', error);
+    }
+  },
+
+  async get(key: string): Promise<{ blob: Blob; name: string } | undefined> {
+    try {
+      const db = await initDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(MUSIC_STORE, 'readonly');
+        const store = transaction.objectStore(MUSIC_STORE);
+        const request = store.get(key);
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.error('Failed to get music from IndexedDB:', error);
+      return undefined;
+    }
+  },
+
+  async list(): Promise<{ id: string; name: string }[]> {
+    try {
+      const db = await initDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(MUSIC_STORE, 'readonly');
+        const store = transaction.objectStore(MUSIC_STORE);
+        const request = store.getAllKeys();
+
+        request.onsuccess = () => {
+          const keys = request.result as string[];
+          const getRequest = store.getAll();
+          getRequest.onsuccess = () => {
+            const results = getRequest.result as { blob: Blob; name: string }[];
+            const list = keys.map((key, idx) => ({
+              id: key,
+              name: results[idx]?.name || 'Unknown Track'
+            }));
+            resolve(list);
+          };
+          getRequest.onerror = () => reject(getRequest.error);
+        };
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.error('Failed to list music from IndexedDB:', error);
+      return [];
+    }
+  },
+
+  async delete(key: string): Promise<void> {
+    try {
+      const db = await initDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(MUSIC_STORE, 'readwrite');
+        const store = transaction.objectStore(MUSIC_STORE);
+        const request = store.delete(key);
+
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.error('Failed to delete music from IndexedDB:', error);
+    }
+  },
+
+  async clear(): Promise<void> {
+    try {
+      const db = await initDB();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(MUSIC_STORE, 'readwrite');
+        const store = transaction.objectStore(MUSIC_STORE);
+        const request = store.clear();
+
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.error('Failed to clear music store:', error);
+    }
+  }
+};
+

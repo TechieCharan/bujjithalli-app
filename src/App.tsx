@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Home, BookOpen, Clock, CheckSquare, Heart, Settings as SettingsIcon } from 'lucide-react';
+import { Home, BookOpen, Clock, CheckSquare, Heart, Settings as SettingsIcon, Layers } from 'lucide-react';
 
-import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, BucketItem, UserProfile, DailyLog, MockTest } from './types';
+import type { AppTheme, AppTab, SyllabusSubject, SyllabusTopic, TodoItem, TodoCategory, PriorityLevel, BucketItem, UserProfile, DailyLog, MockTest, Flashcard, FlashcardSet } from './types';
 import { DEFAULT_SYLLABUS } from './data/syllabus';
 import { stateStorage } from './db/storage';
 import { audioSynthesizer } from './components/AudioSynthesizer';
@@ -13,6 +13,7 @@ import SyllabusTracker from './components/SyllabusTracker';
 import PomodoroTimer from './components/PomodoroTimer';
 import TodoList from './components/TodoList';
 import BucketList from './components/BucketList';
+import FlashcardsView from './components/FlashcardsView';
 import Settings from './components/Settings';
 
 // Default mock values for empty state seeding
@@ -27,6 +28,32 @@ const INITIAL_BUCKET: BucketItem[] = [
   { id: 'bucket-1', title: 'Achieve SSC CGL Top Rank & Get Posted 👑', description: 'Your dream job is waiting. Work hard now, shine later!', category: 'Career Goals 💼', completed: false, targetDate: '2026-10-31' },
   { id: 'bucket-2', title: 'Stroll under cherry blossom gardens in Kyoto 🌸', description: 'Float under pink petals with the breeze!', category: 'Travel ✈️', completed: false },
   { id: 'bucket-3', title: 'Build a cozy private plant terrace library 🌿', description: 'Coffee, books, green vines, and beautiful lights.', category: 'Personal Growth 🌱', completed: false }
+];
+
+const INITIAL_FLASHCARDS: FlashcardSet[] = [
+  {
+    id: 'set-1',
+    title: 'SSC CGL Polity & Constitution 🏛️',
+    description: 'Important articles, amendments, and features of the Indian Constitution.',
+    category: 'GK / Polity 🌸',
+    createdAt: Date.now(),
+    cards: [
+      { id: 'c1', front: 'Article 324', back: 'Superintendence, direction and control of elections to be vested in an Election Commission.', status: 'new' },
+      { id: 'c2', front: 'Article 368', back: 'Power of Parliament to amend the Constitution and procedure therefor.', status: 'new' },
+      { id: 'c3', front: 'Article 21', back: 'Protection of life and personal liberty.', status: 'new' }
+    ]
+  },
+  {
+    id: 'set-2',
+    title: 'Quant Quick Formulas 📐',
+    description: 'Formulas for algebra, geometry, and arithmetic focus.',
+    category: 'Quant 📐',
+    createdAt: Date.now(),
+    cards: [
+      { id: 'q1', front: 'Sum of interior angles of a polygon', back: '(n - 2) * 180 degrees', status: 'new' },
+      { id: 'q2', front: 'Area of an equilateral triangle', back: '(sqrt(3) / 4) * a^2', status: 'new' }
+    ]
+  }
 ];
 
 // Helper function to safely merge local database state with updated schema defaults.
@@ -96,6 +123,10 @@ export const App: React.FC = () => {
     stateStorage.get<BucketItem[]>('bucket', INITIAL_BUCKET)
   );
 
+  const [flashcardSets, setFlashcardSets] = useState<FlashcardSet[]>(() =>
+    stateStorage.get<FlashcardSet[]>('flashcard_sets', INITIAL_FLASHCARDS)
+  );
+
   const [streak, setStreak] = useState<number>(() => 
     stateStorage.get<number>('streak', 0)
   );
@@ -131,6 +162,7 @@ export const App: React.FC = () => {
   useEffect(() => { stateStorage.set('syllabus', syllabus); }, [syllabus]);
   useEffect(() => { stateStorage.set('todos', todos); }, [todos]);
   useEffect(() => { stateStorage.set('bucket', bucketList); }, [bucketList]);
+  useEffect(() => { stateStorage.set('flashcard_sets', flashcardSets); }, [flashcardSets]);
   useEffect(() => { stateStorage.set('streak', streak); }, [streak]);
   useEffect(() => { stateStorage.set('daily_logs', dailyLogs); }, [dailyLogs]);
   useEffect(() => { stateStorage.set('mock_tests', mockTests); }, [mockTests]);
@@ -251,12 +283,28 @@ export const App: React.FC = () => {
     setMockTests(prev => [newMock, ...prev]);
   };
 
+  // Flashcards Handlers
+  const handleAddFlashcardSet = (newSet: FlashcardSet) => {
+    setFlashcardSets(prev => [newSet, ...prev]);
+  };
+
+  const handleDeleteFlashcardSet = (setId: string) => {
+    setFlashcardSets(prev => prev.filter(s => s.id !== setId));
+  };
+
+  const handleUpdateSetCards = (setId: string, updatedCards: Flashcard[]) => {
+    setFlashcardSets(prev => prev.map(set => 
+      set.id === setId ? { ...set, cards: updatedCards } : set
+    ));
+  };
+
   // Backup Sync Imports/Exports
   const getFullBackupString = () => {
     return JSON.stringify({
       syllabus,
       todos,
       bucketList,
+      flashcardSets,
       streak,
       profile,
       theme,
@@ -272,6 +320,7 @@ export const App: React.FC = () => {
       if (data.syllabus) setSyllabus(data.syllabus);
       if (data.todos) setTodos(data.todos);
       if (data.bucketList) setBucketList(data.bucketList);
+      if (data.flashcardSets) setFlashcardSets(data.flashcardSets);
       if (data.streak !== undefined) setStreak(data.streak);
       if (data.profile) setProfile(data.profile);
       if (data.theme) setTheme(data.theme);
@@ -292,6 +341,7 @@ export const App: React.FC = () => {
     stateStorage.remove('syllabus');
     stateStorage.remove('todos');
     stateStorage.remove('bucket');
+    stateStorage.remove('flashcard_sets');
     stateStorage.remove('streak');
     stateStorage.remove('profile');
     stateStorage.remove('theme');
@@ -370,6 +420,15 @@ export const App: React.FC = () => {
             exportDataString={getFullBackupString()}
           />
         );
+      case 'flashcards':
+        return (
+          <FlashcardsView
+            flashcardSets={flashcardSets}
+            onAddSet={handleAddFlashcardSet}
+            onDeleteSet={handleDeleteFlashcardSet}
+            onUpdateSetCards={handleUpdateSetCards}
+          />
+        );
     }
   };
 
@@ -412,6 +471,14 @@ export const App: React.FC = () => {
         >
           <CheckSquare className="tab-item-icon" />
           <span className="tab-label">To-Do</span>
+        </button>
+
+        <button
+          onClick={() => handleTabChange('flashcards')}
+          className={`tab-item ${activeTab === 'flashcards' ? 'active' : ''}`}
+        >
+          <Layers className="tab-item-icon" />
+          <span className="tab-label">Cards</span>
         </button>
 
         <button
