@@ -9,6 +9,7 @@ import { audioSynthesizer } from './AudioSynthesizer';
 
 interface DashboardProps {
   userName: string;
+  globalExamDate?: string;
   syllabus: SyllabusSubject[];
   todos: TodoItem[];
   streak: number;
@@ -152,7 +153,7 @@ const WeakAreaPicker: React.FC<WeakAreaPickerProps> = ({
 };
 
 export const Dashboard: React.FC<DashboardProps> = ({
-  userName, syllabus, todos, streak,
+  userName, globalExamDate, syllabus, todos, streak,
   dailyLogs = [], mockTests = [],
   onLogDailyStudy, onAddMockTest, onDeleteMockTest, onUpdateMockTest, onNavigate
 }) => {
@@ -198,6 +199,40 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const syllabusPercent = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
   const radius = 60, circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (syllabusPercent / 100) * circumference;
+
+  let pacingMessage = 'Set a global exam date in Settings to see pacing.';
+  if (globalExamDate) {
+    const examDate = new Date(`${globalExamDate}T23:59:00`);
+    const diffMs = examDate.getTime() - new Date().getTime();
+    const daysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    const topicsLeft = totalTopics - completedTopics;
+    
+    if (daysLeft === 0 && diffMs > -86400000) {
+      pacingMessage = topicsLeft > 0 ? `Exam is today! You have ${topicsLeft} topics left.` : 'Exam is today! You are all set.';
+    } else if (diffMs <= -86400000) {
+      pacingMessage = 'Exam date has passed.';
+    } else {
+      const pace = (topicsLeft / daysLeft).toFixed(1);
+      pacingMessage = topicsLeft === 0 
+        ? `You've finished everything with ${daysLeft} days to spare!` 
+        : `You need to complete ~${pace} topics/day to finish before your exam in ${daysLeft} days.`;
+    }
+  }
+
+  const upcomingDeadlines: { topicName: string; subjectName: string; targetDate: string }[] = [];
+  syllabus.forEach(s => {
+    s.topics.forEach(t => {
+      if (t.status !== 'completed' && t.targetDate) {
+        const tDate = new Date(`${t.targetDate}T23:59:00`);
+        const diffMs = tDate.getTime() - new Date().getTime();
+        const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        if (daysLeft >= 0 && daysLeft <= 3) {
+          upcomingDeadlines.push({ topicName: t.name, subjectName: s.name, targetDate: t.targetDate });
+        }
+      }
+    });
+  });
+  upcomingDeadlines.sort((a, b) => new Date(a.targetDate).getTime() - new Date(b.targetDate).getTime());
 
   // Todos
   const priorityOrder = { high: 0, medium: 1, low: 2 };
@@ -386,6 +421,35 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <span style={{ fontSize: '10px', color: 'var(--text-secondary)', marginTop: '2px' }}>{streak > 0 ? 'Doing wonderful!' : 'Start focusing today!'}</span>
           <button className="btn-cute" style={{ width: '100%', padding: '6px 10px', fontSize: '11px', marginTop: '12px', borderRadius: '12px' }} onClick={() => onNavigate('timer')}>Start Timer <ChevronRight size={12} /></button>
         </div>
+      </div>
+
+      {/* Analytics & Deadlines */}
+      <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Activity size={16} style={{ color: 'var(--accent)' }} /> Prep Pacing
+        </h3>
+        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+          {pacingMessage}
+        </p>
+
+        {upcomingDeadlines.length > 0 && (
+          <div style={{ marginTop: '10px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
+              <Clock size={12} /> Upcoming Deadlines (Next 3 Days)
+            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {upcomingDeadlines.map((d, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '8px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{d.topicName}</span>
+                    <span style={{ fontSize: '9px', color: 'var(--text-secondary)' }}>{d.subjectName}</span>
+                  </div>
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: '#d97706', flexShrink: 0 }}>{d.targetDate}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Critical Tasks */}

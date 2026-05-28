@@ -201,6 +201,50 @@ export const App: React.FC = () => {
     }));
   };
 
+  const handleAddSubject = (name: string) => {
+    setSyllabus(prev => [...prev, { id: `subject_${Date.now()}`, name, topics: [] }]);
+  };
+
+  const handleUpdateSubject = (subjectId: string, name: string) => {
+    setSyllabus(prev => prev.map(s => s.id === subjectId ? { ...s, name } : s));
+  };
+
+  const handleDeleteSubject = (subjectId: string) => {
+    setSyllabus(prev => prev.filter(s => s.id !== subjectId));
+  };
+
+  const handleAddTopic = (subjectId: string, topic: Omit<SyllabusTopic, 'id'>) => {
+    setSyllabus(prev => prev.map(subject => {
+      if (subject.id !== subjectId) return subject;
+      return { ...subject, topics: [...subject.topics, { ...topic, id: `topic_${Date.now()}` }] };
+    }));
+  };
+
+  const handleDeleteTopic = (subjectId: string, topicId: string) => {
+    setSyllabus(prev => prev.map(subject => {
+      if (subject.id !== subjectId) return subject;
+      return { ...subject, topics: subject.topics.filter(t => t.id !== topicId) };
+    }));
+  };
+
+  const handleReorderTopic = (subjectId: string, topicId: string, direction: 'up' | 'down') => {
+    setSyllabus(prev => prev.map(subject => {
+      if (subject.id !== subjectId) return subject;
+      const index = subject.topics.findIndex(t => t.id === topicId);
+      if (index < 0) return subject;
+      if (direction === 'up' && index === 0) return subject;
+      if (direction === 'down' && index === subject.topics.length - 1) return subject;
+      
+      const newTopics = [...subject.topics];
+      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      const temp = newTopics[index];
+      newTopics[index] = newTopics[targetIndex];
+      newTopics[targetIndex] = temp;
+      
+      return { ...subject, topics: newTopics };
+    }));
+  };
+
   // To-Do Handlers
   const handleAddTodo = (text: string, category: TodoCategory, priority: PriorityLevel, dueDate?: string) => {
     const newTodo: TodoItem = {
@@ -334,6 +378,7 @@ export const App: React.FC = () => {
         return (
           <Dashboard
             userName={profile.name}
+            globalExamDate={profile.globalExamDate}
             syllabus={syllabus}
             todos={todos}
             streak={streak}
@@ -355,6 +400,12 @@ export const App: React.FC = () => {
           <SyllabusTracker
             syllabus={syllabus}
             onUpdateTopic={handleUpdateTopic}
+            onAddTopic={handleAddTopic}
+            onDeleteTopic={handleDeleteTopic}
+            onReorderTopic={handleReorderTopic}
+            onAddSubject={handleAddSubject}
+            onUpdateSubject={handleUpdateSubject}
+            onDeleteSubject={handleDeleteSubject}
           />
         );
       case 'timer':
@@ -381,7 +432,7 @@ export const App: React.FC = () => {
             profile={profile}
             activeTheme={theme}
             isDarkMode={isDarkMode}
-            onUpdateProfileName={(name) => setProfile(prev => ({ ...prev, name }))}
+            onUpdateProfile={(updated) => setProfile(prev => ({ ...prev, ...updated }))}
             onSelectTheme={setTheme}
             onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
             onResetAllData={handleResetData}

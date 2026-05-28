@@ -5,13 +5,16 @@ export interface SyllabusTopic {
   notes: string;
   revisionStatus: 'not_revised' | 'revised_1' | 'revised_2' | 'mastered';
   targetDate?: string;
+  targetTime?: string;
   category?: string;
+  order?: number;
 }
 
 export interface SyllabusSubject {
   id: string;
   name: string;
   topics: SyllabusTopic[];
+  order?: number;
 }
 
 export type TodoCategory = 'study' | 'personal' | 'health' | 'misc';
@@ -38,6 +41,7 @@ export interface UserProfile {
   avatar: string;
   streak: number;
   lastActiveDate?: string;
+  globalExamDate?: string;
 }
 
 export type AppTheme = 'cozy-room' | 'night-sky' | 'nature-rain' | 'study-desk' | 'ocean-breeze';

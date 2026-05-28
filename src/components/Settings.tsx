@@ -7,7 +7,7 @@ interface SettingsProps {
   profile: UserProfile;
   activeTheme: AppTheme;
   isDarkMode: boolean;
-  onUpdateProfileName: (name: string) => void;
+  onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onSelectTheme: (theme: AppTheme) => void;
   onToggleDarkMode: () => void;
   onResetAllData: () => void;
@@ -19,7 +19,7 @@ export const Settings: React.FC<SettingsProps> = ({
   profile,
   activeTheme,
   isDarkMode,
-  onUpdateProfileName,
+  onUpdateProfile,
   onSelectTheme,
   onToggleDarkMode,
   onResetAllData,
@@ -27,6 +27,7 @@ export const Settings: React.FC<SettingsProps> = ({
   exportDataString
 }) => {
   const [nameInput, setNameInput] = useState<string>(profile.name);
+  const [examDateInput, setExamDateInput] = useState<string>(profile.globalExamDate || '');
   const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(() => audioSynthesizer.getMuted());
 
@@ -44,8 +45,8 @@ export const Settings: React.FC<SettingsProps> = ({
     if (!nameInput.trim()) return;
 
     audioSynthesizer.playChime('complete');
-    onUpdateProfileName(nameInput.trim());
-    alert("Profile name updated successfully.");
+    onUpdateProfile({ name: nameInput.trim(), globalExamDate: examDateInput || undefined });
+    alert("Profile settings updated successfully.");
   };
 
   const handleThemeChange = (theme: AppTheme) => {
@@ -119,12 +120,29 @@ export const Settings: React.FC<SettingsProps> = ({
               className="input-cute"
               placeholder="Enter name..."
               required
+              style={{ flex: 1 }}
             />
-            <button type="submit" className="btn-cute" style={{ padding: '10px 14px', fontSize: '11px', borderRadius: '12px' }}>
-              Save
-            </button>
           </div>
         </div>
+
+        <div>
+          <label style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+            Target / Global Exam Date (Optional)
+          </label>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              type="date"
+              value={examDateInput}
+              onChange={(e) => setExamDateInput(e.target.value)}
+              className="input-cute"
+              style={{ flex: 1 }}
+            />
+          </div>
+        </div>
+
+        <button type="submit" className="btn-cute" style={{ padding: '10px 14px', fontSize: '11px', borderRadius: '12px', marginTop: '4px' }}>
+          Save Profile
+        </button>
       </form>
 
       {/* Theme customization card */}
