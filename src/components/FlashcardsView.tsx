@@ -2164,58 +2164,65 @@ Q: What is a noun? A: A person, place, or thing.`}
                         }}
                       >
                         {sec.label}
-                      <button
-                      className="btn-cute animate-pulse"
-                      onClick={handleLaunch10QuestionChallenge}
-                      style={{ padding: '12px', background: 'var(--accent)', border: 'none', color: 'white', display: 'flex', gap: '6px', justifyContent: 'center' }}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    className="btn-cute animate-pulse"
+                    onClick={handleLaunch10QuestionChallenge}
+                    style={{ padding: '12px', background: 'var(--accent)', border: 'none', color: 'white', display: 'flex', gap: '6px', justifyContent: 'center' }}
                   >
                     <Sparkles size={14} /> Launch 10-Q Challenge!
                   </button>
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                  Deck Coverage (Questions count)
-                </label>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {[5, 10, 15, 999].map(num => {
-                    const setObj = flashcardSets.find(s => s.id === selectedSetId);
-                    const deckSize = setObj ? setObj.cards.length : 10;
-                    const val = num === 999 ? deckSize : Math.min(num, deckSize);
-                    const label = num === 999 ? 'All' : `${num} Cards`;
-                    const isSelected = questionLimit === val || (num === 999 && questionLimit >= deckSize);
 
-                    return (
-                      <button
-                        key={num}
-                        onClick={() => {
-                          audioSynthesizer.playChime('click');
-                          setQuestionLimit(val);
-                        }}
-                        className="btn-cute"
-                        style={{
-                          flex: 1,
-                          padding: '8px 0',
-                          borderRadius: '12px',
-                          backgroundColor: isSelected ? 'var(--accent)' : 'var(--glass-bg)',
-                          color: isSelected ? 'white' : 'var(--text-primary)',
-                          border: '1.5px solid var(--glass-border)',
-                          fontSize: '11px'
-                        }}
-                      >
-                        {label}
-                      </button>
-                    );
-                  })}
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+                      Deck Coverage (Questions count)
+                    </label>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      {[5, 10, 15, 999].map(num => {
+                        const setObj = flashcardSets.find(s => s.id === selectedSetId);
+                        const deckSize = setObj ? setObj.cards.length : 10;
+                        const val = num === 999 ? deckSize : Math.min(num, deckSize);
+                        const label = num === 999 ? 'All' : `${num} Cards`;
+                        const isSelected = questionLimit === val || (num === 999 && questionLimit >= deckSize);
+
+                        return (
+                          <button
+                            key={num}
+                            onClick={() => {
+                              audioSynthesizer.playChime('click');
+                              setQuestionLimit(val);
+                            }}
+                            className="btn-cute"
+                            style={{
+                              flex: 1,
+                              padding: '8px 0',
+                              borderRadius: '12px',
+                              backgroundColor: isSelected ? 'var(--accent)' : 'var(--glass-bg)',
+                              color: isSelected ? 'white' : 'var(--text-primary)',
+                              border: '1.5px solid var(--glass-border)',
+                              fontSize: '11px'
+                            }}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Start Button */}
+                  <button
+                    className="btn-cute animate-pulse"
+                    style={{ marginTop: '8px', padding: '12px', background: 'var(--accent)', border: 'none', color: 'white' }}
+                    onClick={() => handleStartQuiz(timerSetupSeconds, quizStrategy, questionLimit)}
+                  >
+                    Launch Game Setup
+                  </button>
                 </div>
-              </div>
-
-              {/* Start Button */}
-                <button
-                className="btn-cute animate-pulse"
-                style={{ marginTop: '8px', padding: '12px', background: 'var(--accent)', border: 'none', color: 'white' }}
-                onClick={() => handleStartQuiz(timerSetupSeconds, quizStrategy, questionLimit)}
-              >
-                Launch Game Setup
-              </button>
+              )}
             </div>
           </div>
         </div>
