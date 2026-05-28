@@ -90,7 +90,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
       audioSynthesizer.playChime('complete');
       onIncrementStreak();
       onLogSession(Math.round(focusDuration / 60), 'focus');
-      alert("Wonderful job! You completed your study session! Take a sweet break now.");
+      alert("Great job — you completed your study session. Take a short break.");
     } else {
       audioSynthesizer.playChime('break');
       onLogSession(Math.round(activeMode === 'short_break' ? shortDuration / 60 : longDuration / 60), activeMode);
@@ -472,7 +472,7 @@ export const PomodoroTimer: React.FC<PomodoroTimerProps> = ({
               </div>
 
               <button className="btn-cute" style={{ marginTop: '8px', padding: '12px' }} onClick={handleApplyConfig}>
-                Apply New Presets 🌸
+                Apply New Presets
               </button>
             </div>
           </div>

@@ -25,7 +25,7 @@ const INITIAL_TODOS: TodoItem[] = [
 
 const INITIAL_BUCKET: BucketItem[] = [
   { id: 'bucket-1', title: 'Achieve Top Rank & Get Dream Posting 👑', description: 'Your dream job is waiting. Work hard now, shine later!', category: 'Career Goals 💼', completed: false, targetDate: '2026-10-31' },
-  { id: 'bucket-2', title: 'Stroll under cherry blossom gardens in Kyoto 🌸', description: 'Float under pink petals with the breeze!', category: 'Travel ✈️', completed: false },
+  { id: 'bucket-2', title: 'Stroll under cherry blossom gardens in Kyoto', description: 'Float under pink petals with the breeze!', category: 'Travel ✈️', completed: false },
   { id: 'bucket-3', title: 'Build a cozy private plant terrace library 🌿', description: 'Coffee, books, green vines, and beautiful lights.', category: 'Personal Growth 🌱', completed: false }
 ];
 
@@ -34,7 +34,7 @@ const INITIAL_FLASHCARDS: FlashcardSet[] = [
     id: 'set-1',
     title: 'Polity & Constitution 🏛️',
     description: 'Important articles, amendments, and features of the Indian Constitution.',
-    category: 'GK / Polity 🌸',
+    category: 'GK / Polity',
     createdAt: Date.now(),
     cards: [
       { id: 'c1', front: 'Article 324', back: 'Superintendence, direction and control of elections to be vested in an Election Commission.', status: 'new' },
@@ -135,7 +135,7 @@ export const App: React.FC = () => {
   );
 
   const [profile, setProfile] = useState<UserProfile>(() =>
-    stateStorage.get<UserProfile>('profile', { name: 'learning-loop', avatar: '🌸', streak: 0 })
+    stateStorage.get<UserProfile>('profile', { name: 'learning-loop', avatar: '🌱', streak: 0 })
   );
 
   const [theme, setTheme] = useState<AppTheme>(() =>
@@ -157,7 +157,7 @@ export const App: React.FC = () => {
   const [mockTests, setMockTests] = useState<MockTest[]>(() =>
     stateStorage.get<MockTest[]>('mock_tests', [
       { id: 'mock-1', date: '2026-05-15', score: 135, notes: 'Felt good in English, Quant needs speed.' },
-      { id: 'mock-2', date: '2026-05-19', score: 142, notes: 'Polity questions got fully correct! 🌸' }
+      { id: 'mock-2', date: '2026-05-19', score: 142, notes: 'Polity questions got fully correct!' }
     ])
   );
 

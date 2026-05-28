@@ -1065,7 +1065,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
   const getGradeString = (accuracy: number) => {
     if (accuracy >= 95) return 'A+ 🏆';
     if (accuracy >= 85) return 'A ⭐';
-    if (accuracy >= 75) return 'B 🌸';
+    if (accuracy >= 75) return 'B';
     if (accuracy >= 60) return 'C ☕';
     return 'D 📚';
   };
@@ -1077,7 +1077,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 className="cute-title">Study Hub 🌸</h1>
+          <h1 className="cute-title">Study Hub</h1>
           <p className="cute-subtitle">Quiz timers & document extraction</p>
         </div>
         <div style={{ display: 'flex', gap: '6px' }}>
@@ -1814,7 +1814,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
             <option value="Quant 📐">Quant 📐</option>
             <option value="English 🔤">English 🔤</option>
             <option value="History 🏛️">History 🏛️</option>
-            <option value="GK / Polity 🌸">GK / Polity 🌸</option>
+            <option value="GK / Polity">GK / Polity</option>
           </select>
         </div>
       </div>
@@ -1854,7 +1854,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({
           ))}
         </div>
         <button className="btn-cute btn-cute-secondary" onClick={handleAddManualCardRow} style={{ padding: '8px' }}><Plus size={14} /> Add Card Row</button>
-        <button className="btn-cute" onClick={handleSaveManualSet} style={{ marginTop: '4px' }}>Save Set 🌸</button>
+        <button className="btn-cute" onClick={handleSaveManualSet} style={{ marginTop: '4px' }}>Save Set</button>
       </div>
     </div>
   );
@@ -2011,7 +2011,7 @@ Q: What is a noun? A: A person, place, or thing.`}
                 <option value="General 📚">General 📚</option>
                 <option value="Quant 📐">Quant 📐</option>
                 <option value="English 🔤">English 🔤</option>
-                <option value="GK / Polity 🌸">GK / Polity 🌸</option>
+                <option value="GK / Polity">GK / Polity</option>
               </select>
             </div>
           </div>
@@ -2055,12 +2055,12 @@ Q: What is a noun? A: A person, place, or thing.`}
             >
               <Sparkles size={14} /> Launch 10-Q Challenge! 🏆
             </button>
-            <button
+              <button
               className="btn-cute btn-cute-secondary"
               onClick={handleSaveImportedSet}
               style={{ padding: '10px' }}
             >
-              Save Deck Normally 🌸
+              Save Deck Normally
             </button>
           </div>
         </div>
@@ -2086,7 +2086,7 @@ Q: What is a noun? A: A person, place, or thing.`}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Sparkles size={18} style={{ color: 'var(--accent)' }} />
                 <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)' }}>
-                  Quiz Strategy & Rules 🌸
+                  Quiz Strategy & Rules
                 </h3>
               </div>
               <button className="btn-circle" style={{ width: '32px', height: '32px', fontSize: '12px' }} onClick={() => setShowConfigTimer(false)}>x</button>
@@ -2144,7 +2144,7 @@ Q: What is a noun? A: A person, place, or thing.`}
                       { val: 10, label: '⏳ 10s' },
                       { val: 15, label: '⏳ 15s' },
                       { val: 30, label: '⏳ 30s' },
-                      { val: 0, label: '🌸 Relaxed' }
+                      { val: 0, label: 'Relaxed' }
                     ].map(sec => (
                       <button
                         key={sec.val}
@@ -2164,13 +2164,13 @@ Q: What is a noun? A: A person, place, or thing.`}
                         }}
                       >
                         {sec.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Question Count limit */}
+                      <button
+                      className="btn-cute animate-pulse"
+                      onClick={handleLaunch10QuestionChallenge}
+                      style={{ padding: '12px', background: 'var(--accent)', border: 'none', color: 'white', display: 'flex', gap: '6px', justifyContent: 'center' }}
+                  >
+                    <Sparkles size={14} /> Launch 10-Q Challenge!
+                  </button>
               <div>
                 <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
                   Deck Coverage (Questions count)
@@ -2209,12 +2209,12 @@ Q: What is a noun? A: A person, place, or thing.`}
               </div>
 
               {/* Start Button */}
-              <button
+                <button
                 className="btn-cute animate-pulse"
                 style={{ marginTop: '8px', padding: '12px', background: 'var(--accent)', border: 'none', color: 'white' }}
                 onClick={() => handleStartQuiz(timerSetupSeconds, quizStrategy, questionLimit)}
               >
-                Launch Game Setup 🌸
+                Launch Game Setup
               </button>
             </div>
           </div>

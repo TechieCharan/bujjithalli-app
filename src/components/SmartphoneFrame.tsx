@@ -37,7 +37,6 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
       {/* Cute Side Panel with instructions, countdown calendar, and hero */}
       <div className="desktop-side-panel" style={{ ...sidePanelStyle, display: 'flex', flexDirection: 'column', gap: '14px', width: '300px', height: 'fit-content', maxHeight: '90vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '28px' }}>🌸</span>
           <div>
             <h2 style={{ fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', fontSize: '18px', fontWeight: 700 }}>
               learning-loop
@@ -59,7 +58,7 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
 
           <div style={{ textAlign: 'center', margin: '4px 0 10px 0', background: 'var(--accent-light)', padding: '6px', borderRadius: '12px', border: '1px dashed var(--accent)' }}>
             <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)' }}>
-              ⏳ {diffDays > 0 ? `${diffDays} Days Left!` : 'Exam Day! 🏆'}
+              ⏳ {diffDays > 0 ? `${diffDays} days remaining` : 'Exam Day!'}
             </span>
           </div>
 
@@ -139,9 +138,9 @@ export const SmartphoneFrame: React.FC<SmartphoneFrameProps> = ({ children, dail
             alt="learning-loop Study Hero"
             style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
           />
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '10px', color: 'white', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '10px', color: 'white', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Award size={14} style={{ color: '#f5b041' }} />
-            <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'var(--font-cute)' }}>You can do it, learning-loop! 🏆</span>
+            <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'var(--font-cute)' }}>You can do it, learning-loop!</span>
           </div>
         </div>
 

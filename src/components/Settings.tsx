@@ -46,7 +46,7 @@ export const Settings: React.FC<SettingsProps> = ({
 
     audioSynthesizer.playChime('complete');
     onUpdateProfileName(nameInput.trim());
-    alert("Profile name updated successfully");
+    alert("Profile name updated successfully.");
   };
 
   const handleThemeChange = (theme: AppTheme) => {
@@ -84,7 +84,7 @@ export const Settings: React.FC<SettingsProps> = ({
         JSON.parse(text);
         audioSynthesizer.playChime('complete');
         onImportAllData(text);
-        alert("Backup imported successfully! The page will refresh to apply your data. 🌸");
+        alert("Backup imported successfully. The page will reload to apply your data.");
       } catch (err) {
         console.error(err);
         alert("Error: Invalid JSON backup file.");
@@ -97,7 +97,7 @@ export const Settings: React.FC<SettingsProps> = ({
     audioSynthesizer.playChime('click');
     await photoStorage.clear();
     onResetAllData();
-    alert("All offline databases reset to factory defaults! 🌸");
+    alert("All offline databases have been reset to factory defaults.");
     window.location.reload();
   };
 
@@ -106,7 +106,7 @@ export const Settings: React.FC<SettingsProps> = ({
       {/* Profile settings card */}
       <form onSubmit={handleSaveName} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <User size={16} style={{ color: 'var(--accent)' }} /> 🌸 Profile Settings
+          <User size={16} style={{ color: 'var(--accent)' }} /> Profile Settings
         </h3>
 
         <div>

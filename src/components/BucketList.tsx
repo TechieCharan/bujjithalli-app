@@ -19,7 +19,7 @@ export const BucketList: React.FC<BucketListProps> = ({
 }) => {
   const [activeFilterCategory, setActiveFilterCategory] = useState<string>('all');
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
-  const [categories, setCategories] = useState<string[]>(['Travel ✈️', 'Career 💼', 'Fitness 🏃‍♀️', 'Experiences 🎡', 'Purchases 🛍️', 'Personal Growth 🌱']);
+  const [categories, setCategories] = useState<string[]>(['Travel ✈️', 'Career 💼', 'Fitness 💪', 'Experiences 🎡', 'Purchases 🛍️', 'Personal Growth 🌱']);
   
   // New Dream States
   const [title, setTitle] = useState<string>('');
@@ -155,7 +155,7 @@ export const BucketList: React.FC<BucketListProps> = ({
             borderColor: 'var(--glass-border)'
           }}
         >
-          🌈 All Dreams
+          All Dreams
         </button>
         {categories.map(cat => (
           <button
@@ -180,14 +180,14 @@ export const BucketList: React.FC<BucketListProps> = ({
         onClick={() => { audioSynthesizer.playChime('click'); setShowAddForm(!showAddForm); }}
         style={{ padding: '10px', borderRadius: '14px', width: '100%', fontSize: '12px' }}
       >
-        <Plus size={14} /> Add a New Dream Goal 🌸
+        <Plus size={14} /> Add a New Dream Goal
       </button>
 
       {/* Add Dream Form Sheet */}
       {showAddForm && (
         <form className="glass-panel" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px', animation: 'fadeIn 0.3s' }}>
-          <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)' }}>
-            💖 Capture Your Dream Goal
+            <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-cute)' }}>
+            Capture Your Dream Goal
           </h4>
 
           <div>
@@ -196,7 +196,7 @@ export const BucketList: React.FC<BucketListProps> = ({
             </label>
             <input
               type="text"
-              placeholder="e.g. Visit cherry blossom gardens in Japan 🌸"
+              placeholder="e.g. Visit cherry blossom gardens in Japan"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="input-cute"
@@ -305,7 +305,7 @@ export const BucketList: React.FC<BucketListProps> = ({
           </div>
 
           <button type="submit" className="btn-cute" style={{ width: '100%', padding: '10px' }}>
-            Save Dream 🌸
+            Save Dream
           </button>
         </form>
       )}

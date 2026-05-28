@@ -132,7 +132,7 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
             if (cat === 'Static GK') emoji = '🗿';
             if (cat === 'Environment') emoji = '🌿';
             if (cat === 'Computer') emoji = '💻';
-            if (cat === 'All') emoji = '🌸';
+            if (cat === 'All') emoji = '🌍';
 
             return (
               <button
@@ -378,7 +378,7 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({ syllabus, onUp
                   onChange={(e) => setEditNotes(e.target.value)}
                   className="input-cute"
                   rows={4}
-                  placeholder="E.g., Formula: Ratio of speeds is inversely proportional to time. Focus on geometry proofs! 🌸"
+                  placeholder="E.g., Formula: Ratio of speeds is inversely proportional to time. Focus on geometry proofs!"
                   style={{ fontSize: '12px', resize: 'none', lineHeight: '1.4' }}
                 />
               </div>

@@ -30,14 +30,14 @@ interface DashboardProps {
 }
 
 const BUJJI_QUOTES = [
-  "You've got this! 💖",
-  "Every small step brings you closer to your dream rank! 👑",
-  "Take a deep breath, you are doing amazing! 🌸",
-  "Your dedication is inspiring. Focus and shine! ✨",
-  "Don't stress, just do your best! ☕",
-  "Your exam is just a step, but you are a superstar! 🌟",
-  "Work hard in silence, let your score make the noise! 📚",
-  "You are capable of doing wonderful things! 💕"
+  "You've got this!",
+  "Every small step brings you closer to your goal.",
+  "Take a deep breath — you're doing great.",
+  "Your dedication is inspiring. Focus and shine.",
+  "Don't stress — do your best.",
+  "Your exam is one step; you're capable and prepared.",
+  "Work hard in silence; let your score show your progress.",
+  "You are capable of achieving great things."
 ];
 
 const PRESET_SUBJECTS = ['Quant', 'English', 'GK / GS', 'Reasoning', 'General Awareness'];
@@ -252,14 +252,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
     if (isNaN(h) || h <= 0 || isNaN(t) || t < 0) return;
     audioSynthesizer.playChime('complete');
     onLogDailyStudy(h, t);
-    alert('Logged study details for today! Keep up the magic');
+    alert('Logged study details for today. Keep up the great work!');
     setStudyHours('4'); setStudyTopics('1');
   };
 
   const handleMockSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const sc = parseInt(mockScore, 10);
-    if (isNaN(sc) || sc < 0 || sc > 200) { alert('Please enter a valid score (0–200)!'); return; }
+    if (isNaN(sc) || sc < 0 || sc > 200) { alert('Please enter a valid score (0–200).'); return; }
     audioSynthesizer.playChime('complete');
     onAddMockTest(sc,
       mockAccuracy ? parseFloat(mockAccuracy) : undefined,
@@ -269,7 +269,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       mockNotes.trim() || undefined,
       mockSubject || undefined
     );
-    alert(`Mock test logged! Score: ${sc}/200. Proud of you! 🏆`);
+    alert(`Mock test logged — Score: ${sc}/200. Well done.`);
     setMockScore('130'); setMockAccuracy(''); setMockTimeTaken('');
     setMockWeakAreas([]); setMockCustomWeak(''); setMockMistakes('');
     setMockNotes(''); setMockSubject(''); setShowAdvancedForm(false);
@@ -297,8 +297,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const saveEdit = (id: string) => {
     if (!editState) return;
     const sc = parseInt(editState.score, 10);
-    if (isNaN(sc) || sc < 0 || sc > 200) { alert('Score must be 0–200!'); return; }
-    if (!editState.date) { alert('Please select a valid date!'); return; }
+    if (isNaN(sc) || sc < 0 || sc > 200) { alert('Score must be between 0 and 200.'); return; }
+    if (!editState.date) { alert('Please select a valid date.'); return; }
     audioSynthesizer.playChime('complete');
     onUpdateMockTest(id, {
       date: editState.date, score: sc,
@@ -391,7 +391,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         ) : dashboardTodos.map(todo => (
           <div key={todo.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: '12px', background: 'var(--bg-primary)', border: '1.5px solid var(--glass-border)', marginBottom: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
-              <span style={{ fontSize: '14px' }}>{todo.category === 'study' ? '📚' : todo.category === 'personal' ? '🌸' : todo.category === 'health' ? '🏃‍♀️' : '⭐'}</span>
+              <span style={{ fontSize: '14px' }}>{todo.category === 'study' ? '📚' : todo.category === 'personal' ? '🌿' : todo.category === 'health' ? '💪' : '⭐'}</span>
               <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{todo.text}</span>
             </div>
             <span className={`badge badge-${todo.priority}`} style={{ textTransform: 'capitalize', flexShrink: 0 }}>{todo.priority}</span>
@@ -406,7 +406,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           {(['study', 'mock'] as const).map(tab => (
             <button key={tab} onClick={() => { audioSynthesizer.playChime('click'); setActiveSubTab(tab); }}
               style={{ flex: 1, padding: '8px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontWeight: 700, fontFamily: 'var(--font-cute)', fontSize: '12px', backgroundColor: activeSubTab === tab ? 'var(--glass-bg)' : 'transparent', color: activeSubTab === tab ? 'var(--text-primary)' : 'var(--text-secondary)', boxShadow: activeSubTab === tab ? 'var(--shadow-cute)' : 'none', transition: 'var(--transition-smooth)' }}>
-              {tab === 'study' ? '🌸 Daily Study Tracking' : '🏆 Mock Test Scores'}
+              {tab === 'study' ? 'Daily Study Tracking' : 'Mock Test Scores'}
             </button>
           ))}
         </div>
