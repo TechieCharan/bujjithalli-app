@@ -4,7 +4,7 @@ android {
     namespace = "com.learningloop.app"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.learning-loop.app"
+        applicationId "com.learningloop.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
