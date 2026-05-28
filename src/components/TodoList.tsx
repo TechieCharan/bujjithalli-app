@@ -62,8 +62,8 @@ export const TodoList: React.FC<TodoListProps> = ({
   const getCatIcon = (cat: TodoCategory) => {
     switch (cat) {
       case 'study': return '📚';
-      case 'personal': return '🌸';
-      case 'health': return '🏃‍♀️';
+      case 'personal': return '🌿';
+      case 'health': return '💪';
       case 'misc': return '⭐';
     }
   };
@@ -170,7 +170,7 @@ export const TodoList: React.FC<TodoListProps> = ({
           </div>
 
           <button type="submit" className="btn-cute" style={{ width: '100%', padding: '10px' }}>
-            Save Task 🌸
+            Save Task ✨
           </button>
         </form>
       )}
@@ -287,7 +287,7 @@ export const TodoList: React.FC<TodoListProps> = ({
       >
         <Sparkles size={14} style={{ color: 'var(--accent)' }} />
         <span style={{ fontSize: '10.5px', color: 'var(--text-primary)', fontWeight: 600 }}>
-          You have {todos.filter(t => !t.completed).length} total tasks pending. You are doing amazing! 🌸
+          You have {todos.filter(t => !t.completed).length} total tasks pending. You are doing amazing! ✨
         </span>
       </div>
     </div>

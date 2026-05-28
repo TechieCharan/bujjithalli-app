@@ -20,7 +20,7 @@ const INITIAL_TODOS: TodoItem[] = [
   { id: 'todo-1', text: 'Solve 15 Quant algebra questions 📐', completed: false, category: 'study', priority: 'high' },
   { id: 'todo-2', text: 'Revise static GK books & authors list 📚', completed: false, category: 'study', priority: 'medium' },
   { id: 'todo-3', text: 'Drink 8 glasses of water today 💧', completed: false, category: 'health', priority: 'medium' },
-  { id: 'todo-4', text: 'Organize study desk & clear drafts 🌸', completed: true, category: 'personal', priority: 'low' }
+  { id: 'todo-4', text: 'Organize study desk & clear drafts ✨', completed: true, category: 'personal', priority: 'low' }
 ];
 
 const INITIAL_BUCKET: BucketItem[] = [
