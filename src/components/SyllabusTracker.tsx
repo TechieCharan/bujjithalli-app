@@ -10,7 +10,7 @@ interface SyllabusTrackerProps {
   onDeleteTopic: (subjectId: string, topicId: string) => void;
   onReorderTopic: (subjectId: string, topicId: string, direction: 'up' | 'down') => void;
   onAddSubject: (name: string) => void;
-  onUpdateSubject: (subjectId: string, name: string) => void;
+  onUpdateSubject: (subjectId: string, updates: Partial<SyllabusSubject>) => void;
   onDeleteSubject: (subjectId: string) => void;
 }
 
@@ -198,32 +198,68 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({
         </div>
       )}
 
-      {/* Search & Stats Section */}
-      <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {/* Progress Bar */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '5px' }}>
-            <span>{activeSubcategory === 'All' ? 'Subject' : activeSubcategory} Completion</span>
-            <span>{subjectDone}/{subjectTotal} Topics ({subjectPercent}%)</span>
+      {/* Subject Dashboard Card & Search */}
+      {currentSubject && (
+        <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', borderColor: (getTargetStatus(currentSubject.targetDate, currentSubject.targetTime, subjectTotal > 0 && subjectDone === subjectTotal ? 'completed' : 'pending')?.isOverdue ? '#ef4444' : 'var(--glass-border)') }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h4 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>
+                {currentSubject.name} {activeSubcategory !== 'All' ? `(${activeSubcategory})` : ''}
+              </h4>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {(() => {
+                  let statusLabel = 'Not Started';
+                  let statusColor = 'var(--text-secondary)';
+                  if (subjectTotal > 0) {
+                    if (subjectDone === subjectTotal) { statusLabel = 'Completed'; statusColor = '#10b981'; }
+                    else if (subjectDone > 0) { statusLabel = 'In Progress'; statusColor = '#f59e0b'; }
+                  }
+                  
+                  const tStatus = getTargetStatus(currentSubject.targetDate, currentSubject.targetTime, statusLabel === 'Completed' ? 'completed' : 'pending');
+                  
+                  return (
+                    <>
+                      <span className="badge" style={{ backgroundColor: 'var(--accent-light)', color: statusColor, fontSize: '9px' }}>
+                        {statusLabel}
+                      </span>
+                      {tStatus && (
+                        <span className="badge" style={{ backgroundColor: `${tStatus.color}20`, color: tStatus.color, fontSize: '9px' }}>
+                          ⏳ {tStatus.label}
+                        </span>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+            
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                {subjectDone}/{subjectTotal} Topics
+              </div>
+              <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
+                {subjectPercent}%
+              </div>
+            </div>
           </div>
+          
           <div style={{ width: '100%', height: '8px', background: 'var(--bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${subjectPercent}%`, background: 'var(--accent)', borderRadius: '4px', transition: 'width 0.6s ease-in-out' }} />
           </div>
-        </div>
 
-        {/* Search Bar */}
-        <div style={{ position: 'relative' }}>
-          <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
-          <input
-            type="text"
-            placeholder="Search topic..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="input-cute"
-            style={{ paddingLeft: '34px', fontSize: '12px' }}
-          />
+          <div style={{ position: 'relative', marginTop: '4px' }}>
+            <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+            <input
+              type="text"
+              placeholder="Search topic..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="input-cute"
+              style={{ paddingLeft: '34px', fontSize: '12px' }}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Topics Checklist List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '420px', overflowY: 'auto', paddingRight: '2px' }}>
@@ -238,12 +274,23 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({
 
             let cardBorder = '1.5px solid var(--glass-border)';
             let cardBg = 'var(--glass-bg)';
+            let leftBorderColor = 'transparent';
+            
+            const tStatus = getTargetStatus(topic.targetDate, topic.targetTime, topic.status);
+            
             if (isCompleted) {
               cardBorder = '1.5px solid #a7f3d0';
               cardBg = 'rgba(240, 253, 244, 0.6)';
+              leftBorderColor = '#10b981';
             } else if (isInProgress) {
               cardBorder = '1.5px solid #fde047';
               cardBg = 'rgba(254, 243, 199, 0.4)';
+              leftBorderColor = '#f59e0b';
+            }
+            
+            if (!isCompleted && tStatus) {
+               if (tStatus.isOverdue) leftBorderColor = '#ef4444';
+               else if (tStatus.label.includes('Due Today') || tStatus.label.includes('days')) leftBorderColor = '#f59e0b';
             }
 
             return (
@@ -258,6 +305,7 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({
                   alignItems: 'center',
                   gap: '12px',
                   border: cardBorder,
+                  borderLeft: `4px solid ${leftBorderColor === 'transparent' ? 'var(--glass-border)' : leftBorderColor}`,
                   backgroundColor: cardBg,
                   cursor: 'pointer'
                 }}
@@ -486,23 +534,47 @@ export const SyllabusTracker: React.FC<SyllabusTrackerProps> = ({
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '300px', overflowY: 'auto' }}>
               {syllabus.map(subj => (
-                <div key={subj.id} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <input 
-                    className="input-cute"
-                    style={{ flex: 1, fontSize: '12px', padding: '8px' }}
-                    value={subj.name}
-                    onChange={(e) => onUpdateSubject(subj.id, e.target.value)}
-                  />
-                  <button onClick={() => {
-                    if (window.confirm(`Are you sure you want to delete ${subj.name}? This will also delete all topics inside.`)) {
-                      onDeleteSubject(subj.id);
-                      if (activeSubjectTab === subj.id) {
-                         setActiveSubjectTab(syllabus.length > 0 ? syllabus[0].id : '');
+                <div key={subj.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px', border: '1px solid var(--glass-border)', borderRadius: '12px', background: 'var(--bg-secondary)' }}>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input 
+                      className="input-cute"
+                      style={{ flex: 1, fontSize: '12px', padding: '8px' }}
+                      value={subj.name}
+                      onChange={(e) => onUpdateSubject(subj.id, { name: e.target.value })}
+                    />
+                    <button onClick={() => {
+                      if (window.confirm(`Are you sure you want to delete ${subj.name}? This will also delete all topics inside.`)) {
+                        onDeleteSubject(subj.id);
+                        if (activeSubjectTab === subj.id) {
+                           setActiveSubjectTab(syllabus.length > 0 ? syllabus[0].id : '');
+                        }
                       }
-                    }
-                  }} className="btn-cute btn-cute-secondary" style={{ padding: '8px', color: '#ef4444' }}>
-                    <Trash2 size={14} />
-                  </button>
+                    }} className="btn-cute btn-cute-secondary" style={{ padding: '8px', color: '#ef4444' }}>
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <label style={{ fontSize: '9px', color: 'var(--text-secondary)', fontWeight: 700 }}>Target Date</label>
+                      <input
+                        type="date"
+                        value={subj.targetDate || ''}
+                        onChange={(e) => onUpdateSubject(subj.id, { targetDate: e.target.value || undefined })}
+                        className="input-cute"
+                        style={{ fontSize: '11px', padding: '6px' }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <label style={{ fontSize: '9px', color: 'var(--text-secondary)', fontWeight: 700 }}>Target Time</label>
+                      <input
+                        type="time"
+                        value={subj.targetTime || ''}
+                        onChange={(e) => onUpdateSubject(subj.id, { targetTime: e.target.value || undefined })}
+                        className="input-cute"
+                        style={{ fontSize: '11px', padding: '6px' }}
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

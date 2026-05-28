@@ -28,6 +28,7 @@ interface DashboardProps {
   onDeleteMockTest: (id: string) => void;
   onUpdateMockTest: (id: string, updates: Partial<MockTest>) => void;
   onNavigate: (tab: 'syllabus' | 'timer' | 'todo') => void;
+  onUpdateExamDate: (date: string) => void;
 }
 
 const BUJJI_QUOTES = [
@@ -155,7 +156,7 @@ const WeakAreaPicker: React.FC<WeakAreaPickerProps> = ({
 export const Dashboard: React.FC<DashboardProps> = ({
   userName, globalExamDate, syllabus, todos, streak,
   dailyLogs = [], mockTests = [],
-  onLogDailyStudy, onAddMockTest, onDeleteMockTest, onUpdateMockTest, onNavigate
+  onLogDailyStudy, onAddMockTest, onDeleteMockTest, onUpdateMockTest, onNavigate, onUpdateExamDate
 }) => {
   const [quote, setQuote] = useState('');
   const [greeting, setGreeting] = useState('Hello');
@@ -221,6 +222,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const upcomingDeadlines: { topicName: string; subjectName: string; targetDate: string }[] = [];
   syllabus.forEach(s => {
+    let sStatus = 'pending';
+    let sTotal = s.topics.length;
+    let sDone = s.topics.filter(t => t.status === 'completed').length;
+    if (sTotal > 0 && sDone === sTotal) sStatus = 'completed';
+
+    if (sStatus !== 'completed' && s.targetDate) {
+      const sDate = new Date(`${s.targetDate}T23:59:00`);
+      const diffMs = sDate.getTime() - new Date().getTime();
+      const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      if (daysLeft >= 0 && daysLeft <= 3) {
+        upcomingDeadlines.push({ topicName: '📚 Entire Subject', subjectName: s.name, targetDate: s.targetDate });
+      }
+    }
+
     s.topics.forEach(t => {
       if (t.status !== 'completed' && t.targetDate) {
         const tDate = new Date(`${t.targetDate}T23:59:00`);
@@ -425,9 +440,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Analytics & Deadlines */}
       <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Activity size={16} style={{ color: 'var(--accent)' }} /> Prep Pacing
-        </h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-cute)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Activity size={16} style={{ color: 'var(--accent)' }} /> Prep Pacing
+          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)' }}>Exam Date:</span>
+            <input 
+              type="date"
+              value={globalExamDate || ''}
+              onChange={e => onUpdateExamDate(e.target.value)}
+              className="input-cute"
+              style={{ padding: '4px 8px', fontSize: '10px', width: 'auto' }}
+            />
+          </div>
+        </div>
         <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
           {pacingMessage}
         </p>

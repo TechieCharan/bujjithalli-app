@@ -205,8 +205,8 @@ export const App: React.FC = () => {
     setSyllabus(prev => [...prev, { id: `subject_${Date.now()}`, name, topics: [] }]);
   };
 
-  const handleUpdateSubject = (subjectId: string, name: string) => {
-    setSyllabus(prev => prev.map(s => s.id === subjectId ? { ...s, name } : s));
+  const handleUpdateSubject = (subjectId: string, updates: Partial<SyllabusSubject>) => {
+    setSyllabus(prev => prev.map(s => s.id === subjectId ? { ...s, ...updates } : s));
   };
 
   const handleDeleteSubject = (subjectId: string) => {

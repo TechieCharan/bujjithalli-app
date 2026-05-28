@@ -15,6 +15,8 @@ export interface SyllabusSubject {
   name: string;
   topics: SyllabusTopic[];
   order?: number;
+  targetDate?: string;
+  targetTime?: string;
 }
 
 export type TodoCategory = 'study' | 'personal' | 'health' | 'misc';
